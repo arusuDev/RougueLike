@@ -54,6 +54,11 @@ interface GameStore {
     processEnemyTurn: () => void;
     generateNewFloor: () => void;
     addMessage: (message: string) => void;
+
+    // デバッグアクション
+    toggleGodMode: () => void;
+    fullHeal: () => void;
+    nextFloor: () => void;
 }
 
 // 初期状態
@@ -66,6 +71,7 @@ const initialState: GameState = {
     items: [],
     messages: [],
     turnCount: 0,
+    godMode: false,
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -355,9 +361,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     Math.abs(enemy.position.y - currentPlayer.position.y);
 
                 if (dist === 1) {
-                    const damage = Math.max(1, enemy.attack - currentPlayer.defense);
-                    currentPlayer.hp -= damage;
-                    addMessage(`${enemy.name}から${damage}のダメージを受けた！`);
+                    if (state.godMode) {
+                        addMessage(`${enemy.name}の攻撃を無効化！`);
+                    } else {
+                        const damage = Math.max(1, enemy.attack - currentPlayer.defense);
+                        currentPlayer.hp -= damage;
+                        addMessage(`${enemy.name}から${damage}のダメージを受けた！`);
+                    }
 
                     if (currentPlayer.hp <= 0) {
                         currentPlayer.hp = 0;
@@ -464,6 +474,39 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 messages: [...s.state.messages.slice(-MAX_MESSAGES + 1), message],
             },
         }));
+    },
+
+    toggleGodMode: () => {
+        set((s) => ({
+            state: {
+                ...s.state,
+                godMode: !s.state.godMode,
+            },
+        }));
+        // set内でstate更新予約したが、ここではメッセージ出すだけ
+        get().addMessage(`無敵モード: ${!get().state.godMode ? 'OFF' : 'ON'}`);
+    },
+
+    fullHeal: () => {
+        const { state, addMessage } = get();
+        if (state.player) {
+            set((s) => ({
+                state: {
+                    ...s.state,
+                    player: {
+                        ...s.state.player!,
+                        hp: s.state.player!.maxHp,
+                    },
+                },
+            }));
+            addMessage('HPを全回復しました！');
+        }
+    },
+
+    nextFloor: () => {
+        const { generateNewFloor, addMessage } = get();
+        addMessage('次のフロアへ強制移動します...');
+        generateNewFloor();
     },
 }));
 
