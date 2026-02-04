@@ -49,7 +49,7 @@ export interface Player extends Entity {
 }
 
 // 敵の種類
-export type EnemyKind = 'slime' | 'goblin' | 'skeleton' | 'zombie';
+export type EnemyKind = 'slime' | 'goblin' | 'skeleton' | 'zombie' | 'bat';
 
 // 敵
 export interface Enemy extends Entity {

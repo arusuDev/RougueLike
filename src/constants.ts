@@ -51,6 +51,13 @@ export const ENEMY_STATS = {
         defense: 1,
         expReward: 15,
     },
+    bat: {
+        name: 'コウモリ',
+        hp: 10,
+        attack: 4,
+        defense: 0,
+        expReward: 5,
+    },
 };
 
 // アイテム定義
@@ -103,6 +110,8 @@ export const ENTITY_COLORS = {
     item: '#ffdd44',
     itemGlow: '#ffee88',
     zombieEye: '#aa0000',
+    bat: '#9999bb', // 床と同化しないように明るく
+    batEye: '#ff0000',
     slimeEye: '#ffffff',
     goblinEye: '#ffff00',
     skeletonEye: '#222222',

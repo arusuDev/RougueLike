@@ -193,6 +193,7 @@ function drawEnemy(
     // サブカラー（目など）の決定
     let subColor = '#ffffff';
     if (kind === 'zombie') subColor = ENTITY_COLORS.zombieEye || '#aa0000';
+    else if (kind === 'bat') subColor = (ENTITY_COLORS as any).batEye || '#ff0000';
     else if (kind === 'slime') subColor = (ENTITY_COLORS as any).slimeEye || '#ffffff';
     else if (kind === 'goblin') subColor = (ENTITY_COLORS as any).goblinEye || '#ffff00';
     else if (kind === 'skeleton') subColor = (ENTITY_COLORS as any).skeletonEye || '#222222';
