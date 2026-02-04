@@ -105,4 +105,5 @@ export interface GameState {
   items: Item[];
   messages: string[];
   turnCount: number;
+  godMode: boolean;
 }

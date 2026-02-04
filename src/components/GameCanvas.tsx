@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import { useGameStore } from '../state/gameState';
+import { useDebugStore } from '../state/debugState';
 import {
     MAP_WIDTH,
     MAP_HEIGHT,
@@ -16,6 +17,7 @@ import { ENEMY_SPRITES } from '../assets/sprites';
 export function GameCanvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { state } = useGameStore();
+    const { debug } = useDebugStore();
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -56,16 +58,28 @@ export function GameCanvas() {
                     continue;
                 }
 
-                if (!tile.explored) {
-                    // 未探索
-                    ctx.fillStyle = TILE_COLORS.unexplored;
-                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
-                } else if (!tile.visible) {
-                    // 探索済みだが視界外（暗く表示）
-                    drawTile(ctx, tile.type, screenX, screenY, true);
-                } else {
-                    // 視界内
+                if (debug.showFullMap) {
+                    // デバッグモード：全表示（明るく表示）
                     drawTile(ctx, tile.type, screenX, screenY, false);
+
+                    // 座標表示
+                    if (debug.showCoordinates && x % 5 === 0 && y % 5 === 0) {
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.font = '10px monospace';
+                        ctx.fillText(`${x},${y}`, screenX + 2, screenY + 12);
+                    }
+                } else {
+                    if (!tile.explored) {
+                        // 未探索
+                        ctx.fillStyle = TILE_COLORS.unexplored;
+                        ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    } else if (!tile.visible) {
+                        // 探索済みだが視界外（暗く表示）
+                        drawTile(ctx, tile.type, screenX, screenY, true);
+                    } else {
+                        // 視界内
+                        drawTile(ctx, tile.type, screenX, screenY, false);
+                    }
                 }
             }
         }
@@ -94,7 +108,7 @@ export function GameCanvas() {
         const playerScreenX = player.position.x * TILE_SIZE + offsetX;
         const playerScreenY = player.position.y * TILE_SIZE + offsetY;
         drawPlayer(ctx, playerScreenX, playerScreenY);
-    }, [state]);
+    }, [state, debug]);
 
     return (
         <canvas

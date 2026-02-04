@@ -8,15 +8,40 @@ import { HUD } from './components/HUD';
 import { MessageLog } from './components/MessageLog';
 import { Inventory } from './components/Inventory';
 import { GameOverScreen } from './components/GameOverScreen';
+import { DebugPanel } from './components/DebugPanel';
+import { useDebugStore } from './state/debugState';
 import type { Direction } from './types';
 
 function App() {
-  const { state, movePlayer, toggleInventory } = useGameStore();
+  const { state, movePlayer, toggleInventory, toggleGodMode, fullHeal, nextFloor } = useGameStore();
+  const { debug, toggleDebug, toggleFullMap } = useDebugStore();
   const { phase } = state;
 
   // キーボード入力ハンドリング
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // デバッグショートカット
+      if (e.key === 'F3') {
+        e.preventDefault();
+        toggleDebug();
+        return;
+      }
+
+      if (debug.enabled) {
+        if (e.key === 'm' || e.key === 'M') {
+          toggleFullMap();
+        }
+        if (e.key === 'g' || e.key === 'G') {
+          toggleGodMode();
+        }
+        if (e.key === 'n' || e.key === 'N') {
+          nextFloor();
+        }
+        if (e.key === 'h' || e.key === 'H') {
+          fullHeal();
+        }
+      }
+
       // インベントリ画面
       if (phase === 'inventory') {
         if (e.key === 'i' || e.key === 'I' || e.key === 'Escape') {
@@ -80,7 +105,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [phase, movePlayer, toggleInventory]);
+  }, [phase, movePlayer, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
 
   return (
     <div className="app">
@@ -100,6 +125,8 @@ function App() {
       )}
 
       {phase === 'gameover' && <GameOverScreen />}
+
+      <DebugPanel />
     </div>
   );
 }
