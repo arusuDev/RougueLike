@@ -11,6 +11,7 @@ import {
 } from '../constants';
 import type { TileType } from '../types';
 import { TileType as TileTypeValue } from '../types';
+import { ENEMY_SPRITES } from '../assets/sprites';
 
 export function GameCanvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -176,34 +177,42 @@ function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number) {
     ctx.shadowBlur = 0;
 }
 
-// 敵描画
+// 敵描画（ドット絵）
 function drawEnemy(
     ctx: CanvasRenderingContext2D,
     kind: string,
     x: number,
     y: number
 ) {
-    const size = TILE_SIZE;
-    const padding = 3;
+    const sprite = ENEMY_SPRITES[kind];
+    if (!sprite) return;
 
-    const color = ENTITY_COLORS[kind as keyof typeof ENTITY_COLORS] || '#ff0000';
+    const pixelSize = TILE_SIZE / 10;
+    const baseColor = ENTITY_COLORS[kind as keyof typeof ENTITY_COLORS] || '#ff0000';
 
-    // 敵の形（丸みを帯びた四角）
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(
-        x + size / 2,
-        y + size / 2,
-        (size - padding * 2) / 2,
-        0,
-        Math.PI * 2
-    );
-    ctx.fill();
+    // サブカラー（目など）の決定
+    let subColor = '#ffffff';
+    if (kind === 'zombie') subColor = ENTITY_COLORS.zombieEye || '#aa0000';
+    else if (kind === 'slime') subColor = (ENTITY_COLORS as any).slimeEye || '#ffffff';
+    else if (kind === 'goblin') subColor = (ENTITY_COLORS as any).goblinEye || '#ffff00';
+    else if (kind === 'skeleton') subColor = (ENTITY_COLORS as any).skeletonEye || '#222222';
 
-    // 目
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x + size / 2 - 4, y + size / 2 - 2, 2, 2);
-    ctx.fillRect(x + size / 2 + 2, y + size / 2 - 2, 2, 2);
+    for (let dy = 0; dy < 10; dy++) {
+        for (let dx = 0; dx < 10; dx++) {
+            const pixel = sprite[dy][dx];
+            if (pixel === 0) continue;
+
+            const px = x + dx * pixelSize;
+            const py = y + dy * pixelSize;
+
+            if (pixel === 1) {
+                ctx.fillStyle = baseColor;
+            } else if (pixel === 2) {
+                ctx.fillStyle = subColor;
+            }
+            ctx.fillRect(px, py, pixelSize, pixelSize);
+        }
+    }
 }
 
 // アイテム描画
