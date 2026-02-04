@@ -118,7 +118,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             DUNGEON_PARAMS.minEnemiesPerFloor,
             DUNGEON_PARAMS.maxEnemiesPerFloor
         );
-        const enemyKinds: EnemyKind[] = ['slime', 'goblin', 'skeleton'];
+        const enemyKinds: EnemyKind[] = ['slime', 'goblin', 'skeleton', 'zombie'];
 
         for (let i = 0; i < enemyCount; i++) {
             let pos = getRandomFloorPosition(floor);
@@ -135,7 +135,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
             // 階層に応じた敵を選択
             let kindIndex = 0;
-            if (newFloorNumber >= 5) kindIndex = randomInt(0, 2);
+            if (newFloorNumber >= 7) kindIndex = randomInt(0, 3);
+            else if (newFloorNumber >= 5) kindIndex = randomInt(0, 2);
             else if (newFloorNumber >= 3) kindIndex = randomInt(0, 1);
 
             const kind = enemyKinds[kindIndex];
