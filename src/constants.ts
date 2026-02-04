@@ -44,6 +44,13 @@ export const ENEMY_STATS = {
         defense: 2,
         expReward: 15,
     },
+    zombie: {
+        name: 'ゾンビ',
+        hp: 30,
+        attack: 5,
+        defense: 1,
+        expReward: 15,
+    },
 };
 
 // アイテム定義
@@ -92,6 +99,7 @@ export const ENTITY_COLORS = {
     slime: '#44aaff',
     goblin: '#ff6644',
     skeleton: '#e8e8e8',
+    zombie: '#9933cc',
     item: '#ffdd44',
     itemGlow: '#ffee88',
 };
