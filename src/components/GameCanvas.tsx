@@ -269,8 +269,8 @@ function drawEnemy(
     x: number,
     y: number
 ) {
-    // 外部画像があればそちらを使用
-    const externalImage = loadExternalImage(kind);
+    // 外部画像があればそちらを使用（スライム以外）
+    const externalImage = kind !== 'slime' ? loadExternalImage(kind) : null;
     if (externalImage && processedImageCache[kind]) {
         ctx.drawImage(processedImageCache[kind], x, y, TILE_SIZE, TILE_SIZE);
         return;
