@@ -5,7 +5,15 @@ export const MAP_WIDTH = 50;
 export const MAP_HEIGHT = 35;
 
 // タイルサイズ（ピクセル）
-export const TILE_SIZE = 20;
+export const TILE_SIZE = 32;
+
+// スプライト設定
+export const SPRITE_CONFIG = {
+    // スプライトのドット数（配列スプライト用）
+    spriteSize: 32,
+    // 透過色（この色は透明として扱われる）
+    transparentColor: '#FF00FF',
+};
 
 // プレイヤー視界範囲
 export const SIGHT_RANGE = 6;
