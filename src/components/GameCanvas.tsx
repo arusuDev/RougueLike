@@ -9,10 +9,81 @@ import {
     TILE_SIZE,
     TILE_COLORS,
     ENTITY_COLORS,
+    SPRITE_CONFIG,
 } from '../constants';
 import type { TileType } from '../types';
 import { TileType as TileTypeValue } from '../types';
 import { ENEMY_SPRITES } from '../assets/sprites';
+
+// 外部画像のキャッシュ
+const imageCache: Record<string, HTMLImageElement | null> = {};
+const imageCacheStatus: Record<string, 'loading' | 'loaded' | 'error'> = {};
+
+// 透過色処理済み画像のキャッシュ
+const processedImageCache: Record<string, HTMLCanvasElement> = {};
+
+// 外部画像を読み込む関数
+function loadExternalImage(kind: string): HTMLImageElement | null {
+    const path = `/sprites/enemies/${kind}.png`;
+
+    if (imageCacheStatus[kind] === 'loaded') {
+        return imageCache[kind];
+    }
+
+    if (imageCacheStatus[kind] === 'loading') {
+        return null;
+    }
+
+    if (imageCacheStatus[kind] === 'error') {
+        return null;
+    }
+
+    // 画像の読み込みを開始
+    imageCacheStatus[kind] = 'loading';
+    const img = new Image();
+    img.src = path;
+    img.onload = () => {
+        imageCache[kind] = img;
+        imageCacheStatus[kind] = 'loaded';
+        // 透過色処理を行う
+        processImageWithTransparency(kind, img);
+    };
+    img.onerror = () => {
+        imageCache[kind] = null;
+        imageCacheStatus[kind] = 'error';
+    };
+
+    return null;
+}
+
+// 透過色処理を行う関数
+function processImageWithTransparency(kind: string, img: HTMLImageElement) {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // 透過色をRGBに変換
+    const transparentColor = SPRITE_CONFIG.transparentColor;
+    const tr = parseInt(transparentColor.slice(1, 3), 16);
+    const tg = parseInt(transparentColor.slice(3, 5), 16);
+    const tb = parseInt(transparentColor.slice(5, 7), 16);
+
+    // 透過色のピクセルを透明にする
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i] === tr && data[i + 1] === tg && data[i + 2] === tb) {
+            data[i + 3] = 0; // アルファを0に
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    processedImageCache[kind] = canvas;
+}
 
 export function GameCanvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -113,8 +184,8 @@ export function GameCanvas() {
     return (
         <canvas
             ref={canvasRef}
-            width={800}
-            height={560}
+            width={1024}
+            height={896}
             className="game-canvas"
         />
     );
@@ -191,17 +262,26 @@ function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number) {
     ctx.shadowBlur = 0;
 }
 
-// 敵描画（ドット絵）
+// 敵描画（外部画像優先、なければ配列スプライト）
 function drawEnemy(
     ctx: CanvasRenderingContext2D,
     kind: string,
     x: number,
     y: number
 ) {
+    // 外部画像があればそちらを使用
+    const externalImage = loadExternalImage(kind);
+    if (externalImage && processedImageCache[kind]) {
+        ctx.drawImage(processedImageCache[kind], x, y, TILE_SIZE, TILE_SIZE);
+        return;
+    }
+
+    // 配列スプライトにフォールバック
     const sprite = ENEMY_SPRITES[kind];
     if (!sprite) return;
 
-    const pixelSize = TILE_SIZE / 10;
+    const spriteSize = SPRITE_CONFIG.spriteSize;
+    const pixelSize = TILE_SIZE / spriteSize;
     const baseColor = ENTITY_COLORS[kind as keyof typeof ENTITY_COLORS] || '#ff0000';
 
     // サブカラー（目など）の決定
@@ -212,10 +292,10 @@ function drawEnemy(
     else if (kind === 'goblin') subColor = (ENTITY_COLORS as any).goblinEye || '#ffff00';
     else if (kind === 'skeleton') subColor = (ENTITY_COLORS as any).skeletonEye || '#222222';
 
-    for (let dy = 0; dy < 10; dy++) {
-        for (let dx = 0; dx < 10; dx++) {
-            const pixel = sprite[dy][dx];
-            if (pixel === 0) continue;
+    for (let dy = 0; dy < spriteSize; dy++) {
+        for (let dx = 0; dx < spriteSize; dx++) {
+            const pixel = sprite[dy]?.[dx];
+            if (pixel === 0 || pixel === undefined) continue;
 
             const px = x + dx * pixelSize;
             const py = y + dy * pixelSize;
