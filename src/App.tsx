@@ -30,15 +30,19 @@ function App() {
       if (debug.enabled) {
         if (e.key === 'm' || e.key === 'M') {
           toggleFullMap();
+          return;
         }
         if (e.key === 'g' || e.key === 'G') {
           toggleGodMode();
+          return;
         }
         if (e.key === 'n' || e.key === 'N') {
           nextFloor();
+          return;
         }
         if (e.key === 'h' || e.key === 'H') {
           fullHeal();
+          return;
         }
       }
 
@@ -85,6 +89,36 @@ function App() {
         case 'd':
         case 'D':
           direction = 'right';
+          break;
+        // テンキー斜め移動
+        case '7':
+          direction = 'up-left';
+          break;
+        case '9':
+          direction = 'up-right';
+          break;
+        case '1':
+          direction = 'down-left';
+          break;
+        case '3':
+          direction = 'down-right';
+          break;
+        // vi風斜め移動
+        case 'y':
+        case 'Y':
+          direction = 'up-left';
+          break;
+        case 'u':
+        case 'U':
+          direction = 'up-right';
+          break;
+        case 'b':
+        case 'B':
+          direction = 'down-left';
+          break;
+        case 'n':
+        case 'N':
+          direction = 'down-right';
           break;
         // インベントリ
         case 'i':
