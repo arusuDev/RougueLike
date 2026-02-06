@@ -11,7 +11,7 @@ import {
     ENTITY_COLORS,
     SPRITE_CONFIG,
 } from '../constants';
-import type { TileType } from '../types';
+import type { TileType, Direction } from '../types';
 import { TileType as TileTypeValue } from '../types';
 import { ENEMY_SPRITES } from '../assets/sprites';
 
@@ -172,13 +172,13 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
 
             const screenX = enemy.position.x * TILE_SIZE + offsetX;
             const screenY = enemy.position.y * TILE_SIZE + offsetY;
-            drawEnemy(ctx, enemy.kind, screenX, screenY);
+            drawEnemy(ctx, enemy.kind, screenX, screenY, enemy.direction);
         }
 
         // プレイヤーを描画
         const playerScreenX = player.position.x * TILE_SIZE + offsetX;
         const playerScreenY = player.position.y * TILE_SIZE + offsetY;
-        drawPlayer(ctx, playerScreenX, playerScreenY);
+        drawPlayer(ctx, playerScreenX, playerScreenY, player.direction);
 
         // 斜め移動モード中は各角に矢印インジケーターを表示
         if (diagonalMode) {
@@ -247,7 +247,7 @@ function drawTile(
 }
 
 // プレイヤー描画
-function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number) {
+function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number, direction: Direction) {
     const size = TILE_SIZE;
     const padding = 3;
 
@@ -265,6 +265,37 @@ function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number) {
     ctx.strokeRect(x + padding, y + padding, size - padding * 2, size - padding * 2);
 
     ctx.shadowBlur = 0;
+
+    // 目を描画（方向によってずらす）
+    ctx.fillStyle = '#004400';
+    const eyeSize = 4;
+    const eyeOffset = 6; // 中心からの距離
+    let dx = 0;
+    let dy = 0;
+
+    // 方向によるオフセット
+    if (direction.includes('up')) dy = -4;
+    if (direction.includes('down')) dy = 4;
+    if (direction.includes('left')) dx = -4;
+    if (direction.includes('right')) dx = 4;
+
+    // 中央の基本位置
+    const centerX = x + size / 2;
+    const centerY = y + size / 2;
+
+    // 目を2つ描く
+    ctx.fillRect(
+        centerX - eyeOffset + dx - eyeSize / 2,
+        centerY + dy - eyeSize / 2,
+        eyeSize,
+        eyeSize
+    );
+    ctx.fillRect(
+        centerX + eyeOffset + dx - eyeSize / 2,
+        centerY + dy - eyeSize / 2,
+        eyeSize,
+        eyeSize
+    );
 }
 
 // 敵描画（外部画像優先、なければ配列スプライト）
@@ -272,7 +303,8 @@ function drawEnemy(
     ctx: CanvasRenderingContext2D,
     kind: string,
     x: number,
-    y: number
+    y: number,
+    direction: Direction
 ) {
     // 外部画像があればそちらを使用（スライム以外）
     const externalImage = kind !== 'slime' ? loadExternalImage(kind) : null;
@@ -299,23 +331,35 @@ function drawEnemy(
     else if (kind === 'salamander') subColor = (ENTITY_COLORS as any).salamanderEye || '#ffff00';
     else if (kind === 'gigaSalamander') subColor = (ENTITY_COLORS as any).gigaSalamanderEye || '#ffaa00';
 
+    // 方向によるオフセット（目のピクセルをずらす）
+    let offsetDx = 0;
+    let offsetDy = 0;
+    if (direction.includes('up')) offsetDy = -1;
+    if (direction.includes('down')) offsetDy = 1;
+    if (direction.includes('left')) offsetDx = -1;
+    if (direction.includes('right')) offsetDx = 1;
+
     for (let dy = 0; dy < spriteSize; dy++) {
         for (let dx = 0; dx < spriteSize; dx++) {
             const pixel = sprite[dy]?.[dx];
             if (pixel === 0 || pixel === undefined) continue;
 
-            const px = x + dx * pixelSize;
-            const py = y + dy * pixelSize;
+            let px = x + dx * pixelSize;
+            let py = y + dy * pixelSize;
 
-            if (pixel === 1) {
-                ctx.fillStyle = baseColor;
-            } else if (pixel === 2) {
+            // 目のピクセル（pixel === 2）は方向によってずらす
+            if (pixel === 2) {
+                px += offsetDx * pixelSize;
+                py += offsetDy * pixelSize;
                 ctx.fillStyle = subColor;
+            } else if (pixel === 1) {
+                ctx.fillStyle = baseColor;
             }
             ctx.fillRect(px, py, pixelSize, pixelSize);
         }
     }
 }
+
 
 // アイテム描画
 function drawItem(ctx: CanvasRenderingContext2D, x: number, y: number) {
