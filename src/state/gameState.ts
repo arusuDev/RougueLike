@@ -278,13 +278,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             // 攻撃
             const damage = Math.max(1, player.attack - targetEnemy.defense);
             targetEnemy.hp -= damage;
-            // 攻撃時もその方向を向く
-            set({
-                state: {
-                    ...state,
-                    player: { ...player, direction },
-                }
-            });
+
+            // ダメージメッセージを先に追加
             addMessage(`${targetEnemy.name}に${damage}のダメージ！`);
 
             if (targetEnemy.hp <= 0) {
@@ -293,7 +288,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
                 // 経験値獲得
                 const newExp = player.exp + targetEnemy.expReward;
-                let newPlayer = { ...player, exp: newExp };
+                let newPlayer = { ...player, exp: newExp, direction };
 
                 // レベルアップチェック
                 if (
@@ -310,22 +305,25 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     addMessage(`レベルアップ！レベル${newPlayer.level}になった！`);
                 }
 
-                set({
+                // 最新の状態を取得してセット
+                set((s) => ({
                     state: {
-                        ...state,
+                        ...s.state,
                         player: newPlayer,
-                        enemies: enemies.filter((e) => e.id !== targetEnemy.id),
+                        enemies: s.state.enemies.filter((e) => e.id !== targetEnemy.id),
                     },
-                });
+                }));
             } else {
-                set({
+                // 敵にダメージを与えたが倒せなかった
+                set((s) => ({
                     state: {
-                        ...state,
-                        enemies: enemies.map((e) =>
+                        ...s.state,
+                        player: { ...player, direction },
+                        enemies: s.state.enemies.map((e) =>
                             e.id === targetEnemy.id ? targetEnemy : e
                         ),
                     },
-                });
+                }));
             }
         } else {
             // 移動
@@ -339,20 +337,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
             if (pickedItem) {
                 newPlayer.inventory.push(pickedItem);
                 addMessage(`${pickedItem.name}を拾った！`);
-                set({
+                set((s) => ({
                     state: {
-                        ...state,
+                        ...s.state,
                         player: newPlayer,
-                        items: items.filter((i) => i.id !== pickedItem.id),
+                        items: s.state.items.filter((i) => i.id !== pickedItem.id),
                     },
-                });
+                }));
             } else {
-                set({
+                set((s) => ({
                     state: {
-                        ...state,
+                        ...s.state,
                         player: newPlayer,
                     },
-                });
+                }));
             }
 
             // 階段チェック
@@ -416,14 +414,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
                         if (currentPlayer.hp <= 0) {
                             currentPlayer.hp = 0;
-                            set({
+                            addMessage('力尽きた...');
+                            set((s) => ({
                                 state: {
-                                    ...state,
+                                    ...s.state,
                                     phase: 'gameover',
                                     player: currentPlayer,
                                 },
-                            });
-                            addMessage('力尽きた...');
+                            }));
                             return;
                         }
                     }
@@ -448,13 +446,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
             }
         }
 
-        set({
+        set((s) => ({
             state: {
-                ...state,
+                ...s.state,
                 player: currentPlayer,
                 enemies: updatedEnemies,
             },
-        });
+        }));
     },
 
     useItem: (itemIndex: number) => {
@@ -470,16 +468,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 const healAmount = Math.min(item.effect, player.maxHp - player.hp);
                 const newHp = player.hp + healAmount;
                 addMessage(`${item.name}を使った！HPが${healAmount}回復した！`);
-                set({
+                set((s) => ({
                     state: {
-                        ...state,
+                        ...s.state,
                         player: {
                             ...player,
                             hp: newHp,
                             inventory: player.inventory.filter((_, i) => i !== itemIndex),
                         },
                     },
-                });
+                }));
                 break;
             }
 
@@ -503,16 +501,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 addMessage(
                     `${item.name}を使った！${hitCount}体の敵に${item.effect}のダメージ！`
                 );
-                set({
+                set((s) => ({
                     state: {
-                        ...state,
+                        ...s.state,
                         enemies: newEnemies,
                         player: {
                             ...player,
                             inventory: player.inventory.filter((_, i) => i !== itemIndex),
                         },
                     },
-                });
+                }));
                 break;
             }
         }
