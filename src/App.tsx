@@ -1,6 +1,6 @@
 // メインアプリケーション
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGameStore, descendStairs } from './state/gameState';
 import { TitleScreen } from './components/TitleScreen';
 import { GameCanvas } from './components/GameCanvas';
@@ -17,9 +17,20 @@ function App() {
   const { debug, toggleDebug, toggleFullMap } = useDebugStore();
   const { phase } = state;
 
+  // 押下中のキーを追跡（Shift+方向キーの斜め移動用）
+  const heldKeysRef = useRef<Set<string>>(new Set());
+  const [diagonalMode, setDiagonalMode] = useState(false);
+
   // キーボード入力ハンドリング
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      heldKeysRef.current.add(e.code);
+
+      // Shift押下で斜め移動モード切替
+      if (e.key === 'Shift') {
+        setDiagonalMode(true);
+      }
+
       // デバッグショートカット
       if (e.key === 'F3') {
         e.preventDefault();
@@ -30,15 +41,19 @@ function App() {
       if (debug.enabled) {
         if (e.key === 'm' || e.key === 'M') {
           toggleFullMap();
+          return;
         }
         if (e.key === 'g' || e.key === 'G') {
           toggleGodMode();
+          return;
         }
         if (e.key === 'n' || e.key === 'N') {
           nextFloor();
+          return;
         }
         if (e.key === 'h' || e.key === 'H') {
           fullHeal();
+          return;
         }
       }
 
@@ -54,6 +69,29 @@ function App() {
       if (phase !== 'playing') return;
 
       let direction: Direction | null = null;
+
+      // Shift+方向キーの組み合わせで斜め移動（斜めのみ許可）
+      if (e.shiftKey) {
+        const held = heldKeysRef.current;
+        const up = held.has('ArrowUp') || held.has('KeyW');
+        const down = held.has('ArrowDown') || held.has('KeyS');
+        const left = held.has('ArrowLeft') || held.has('KeyA');
+        const right = held.has('ArrowRight') || held.has('KeyD');
+
+        if (up && left) direction = 'up-left';
+        else if (up && right) direction = 'up-right';
+        else if (down && left) direction = 'down-left';
+        else if (down && right) direction = 'down-right';
+
+        // 方向キーが押されている場合は斜めのみ（上下左右を無効化）
+        if (up || down || left || right) {
+          if (direction) {
+            e.preventDefault();
+            movePlayer(direction);
+          }
+          return;
+        }
+      }
 
       // 矢印キー
       switch (e.key) {
@@ -86,6 +124,36 @@ function App() {
         case 'D':
           direction = 'right';
           break;
+        // テンキー斜め移動
+        case '7':
+          direction = 'up-left';
+          break;
+        case '9':
+          direction = 'up-right';
+          break;
+        case '1':
+          direction = 'down-left';
+          break;
+        case '3':
+          direction = 'down-right';
+          break;
+        // vi風斜め移動
+        case 'y':
+        case 'Y':
+          direction = 'up-left';
+          break;
+        case 'u':
+        case 'U':
+          direction = 'up-right';
+          break;
+        case 'b':
+        case 'B':
+          direction = 'down-left';
+          break;
+        case 'n':
+        case 'N':
+          direction = 'down-right';
+          break;
         // インベントリ
         case 'i':
         case 'I':
@@ -103,8 +171,19 @@ function App() {
       }
     };
 
+    const handleKeyUp = (e: KeyboardEvent) => {
+      heldKeysRef.current.delete(e.code);
+      if (e.key === 'Shift') {
+        setDiagonalMode(false);
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, [phase, movePlayer, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
 
   return (
@@ -115,7 +194,7 @@ function App() {
         <div className="game-screen">
           <div className="game-main">
             <div className="game-canvas-container">
-              <GameCanvas />
+              <GameCanvas diagonalMode={diagonalMode} />
             </div>
             <HUD />
           </div>

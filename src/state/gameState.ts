@@ -235,6 +235,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
             case 'right':
                 newX++;
                 break;
+            case 'up-left':
+                newX--;
+                newY--;
+                break;
+            case 'up-right':
+                newX++;
+                newY--;
+                break;
+            case 'down-left':
+                newX--;
+                newY++;
+                break;
+            case 'down-right':
+                newX++;
+                newY++;
+                break;
         }
 
         // 範囲チェック
@@ -361,9 +377,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
             if (newPos === null) {
                 // プレイヤーに隣接していれば攻撃
-                const dist =
-                    Math.abs(enemy.position.x - currentPlayer.position.x) +
-                    Math.abs(enemy.position.y - currentPlayer.position.y);
+                const dist = Math.max(
+                    Math.abs(enemy.position.x - currentPlayer.position.x),
+                    Math.abs(enemy.position.y - currentPlayer.position.y)
+                );
 
                 if (dist === 1) {
                     if (state.godMode) {

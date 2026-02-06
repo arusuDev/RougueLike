@@ -85,7 +85,7 @@ function processImageWithTransparency(kind: string, img: HTMLImageElement) {
     processedImageCache[kind] = canvas;
 }
 
-export function GameCanvas() {
+export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { state } = useGameStore();
     const { debug } = useDebugStore();
@@ -179,7 +179,12 @@ export function GameCanvas() {
         const playerScreenX = player.position.x * TILE_SIZE + offsetX;
         const playerScreenY = player.position.y * TILE_SIZE + offsetY;
         drawPlayer(ctx, playerScreenX, playerScreenY);
-    }, [state, debug]);
+
+        // 斜め移動モード中は各角に矢印インジケーターを表示
+        if (diagonalMode) {
+            drawDiagonalArrows(ctx, playerScreenX, playerScreenY);
+        }
+    }, [state, debug, diagonalMode]);
 
     return (
         <canvas
@@ -330,6 +335,43 @@ function drawItem(ctx: CanvasRenderingContext2D, x: number, y: number) {
     ctx.fill();
 
     ctx.shadowBlur = 0;
+}
+
+// 斜め移動モード矢印描画
+function drawDiagonalArrows(ctx: CanvasRenderingContext2D, playerX: number, playerY: number) {
+    const size = TILE_SIZE;
+    const arrowSize = 8;
+
+    // 4つの斜め方向: [dx, dy] (タイル単位)
+    const diagonals: [number, number][] = [
+        [-1, -1], // 左上
+        [1, -1],  // 右上
+        [-1, 1],  // 左下
+        [1, 1],   // 右下
+    ];
+
+    ctx.save();
+    ctx.shadowColor = ENTITY_COLORS.player;
+    ctx.shadowBlur = 6;
+
+    for (const [dx, dy] of diagonals) {
+        const tileX = playerX + dx * size;
+        const tileY = playerY + dy * size;
+        // 矢印の根元（プレイヤー寄り）と先端（外向き）
+        const centerX = tileX + size / 2;
+        const centerY = tileY + size / 2;
+
+        ctx.fillStyle = 'rgba(0, 255, 136, 0.5)';
+        ctx.beginPath();
+        // 三角形の先端は斜め外側、底辺はプレイヤー側
+        ctx.moveTo(centerX + dx * arrowSize, centerY + dy * arrowSize); // 先端
+        ctx.lineTo(centerX - dx * arrowSize, centerY);                  // 底辺左
+        ctx.lineTo(centerX, centerY - dy * arrowSize);                  // 底辺右
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    ctx.restore();
 }
 
 // 色を暗くするヘルパー
