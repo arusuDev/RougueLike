@@ -149,6 +149,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             if (newFloorNumber >= 3) available.push('goblin');
             if (newFloorNumber >= 5) available.push('skeleton');
             if (newFloorNumber >= 7) available.push('zombie');
+            if (newFloorNumber >= 5) available.push('salamander');
+            if (newFloorNumber >= 8) available.push('gigaSalamander');
 
             const kind = available[randomInt(0, available.length - 1)];
             const stats = ENEMY_STATS[kind];
@@ -164,6 +166,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 attack: stats.attack,
                 defense: stats.defense,
                 expReward: stats.expReward,
+                speed: stats.speed,
+                maxAttacks: stats.maxAttacks,
             });
         }
 
@@ -372,41 +376,52 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const updatedEnemies = [...enemies];
 
         for (const enemy of updatedEnemies) {
-            // 敵の行動を決定
-            const newPos = decideEnemyAction(enemy, currentPlayer.position, floor, updatedEnemies);
+            // 倍速モンスターは1ターンに speed 回行動
+            const speed = enemy.speed || 1;
+            const maxAttacks = enemy.maxAttacks || 1;
+            let attackCount = 0;
 
-            if (newPos === null) {
-                // プレイヤーに隣接していれば攻撃
-                const dist = Math.max(
-                    Math.abs(enemy.position.x - currentPlayer.position.x),
-                    Math.abs(enemy.position.y - currentPlayer.position.y)
-                );
+            for (let step = 0; step < speed; step++) {
+                // 攻撃回数が上限に達したら追加行動しない
+                if (attackCount >= maxAttacks) break;
 
-                if (dist === 1) {
-                    if (state.godMode) {
-                        addMessage(`${enemy.name}の攻撃を無効化！`);
-                    } else {
-                        const damage = Math.max(1, enemy.attack - currentPlayer.defense);
-                        currentPlayer.hp -= damage;
-                        addMessage(`${enemy.name}から${damage}のダメージを受けた！`);
+                // 敵の行動を決定
+                const newPos = decideEnemyAction(enemy, currentPlayer.position, floor, updatedEnemies);
+
+                if (newPos === null) {
+                    // プレイヤーに隣接していれば攻撃（チェビシェフ距離：斜め隣接も1）
+                    const dist = Math.max(
+                        Math.abs(enemy.position.x - currentPlayer.position.x),
+                        Math.abs(enemy.position.y - currentPlayer.position.y)
+                    );
+
+                    if (dist === 1) {
+                        attackCount++;
+                        if (state.godMode) {
+                            addMessage(`${enemy.name}の攻撃を無効化！`);
+                        } else {
+                            const damage = Math.max(1, enemy.attack - currentPlayer.defense);
+                            currentPlayer.hp -= damage;
+                            addMessage(`${enemy.name}から${damage}のダメージを受けた！`);
+                        }
+
+                        if (currentPlayer.hp <= 0) {
+                            currentPlayer.hp = 0;
+                            set({
+                                state: {
+                                    ...state,
+                                    phase: 'gameover',
+                                    player: currentPlayer,
+                                },
+                            });
+                            addMessage('力尽きた...');
+                            return;
+                        }
                     }
-
-                    if (currentPlayer.hp <= 0) {
-                        currentPlayer.hp = 0;
-                        set({
-                            state: {
-                                ...state,
-                                phase: 'gameover',
-                                player: currentPlayer,
-                            },
-                        });
-                        addMessage('力尽きた...');
-                        return;
-                    }
+                } else {
+                    // 移動
+                    enemy.position = newPos;
                 }
-            } else {
-                // 移動
-                enemy.position = newPos;
             }
         }
 
