@@ -99,6 +99,14 @@ export interface DungeonFloor {
 // ゲームフェーズ
 export type GamePhase = 'title' | 'playing' | 'inventory' | 'gameover';
 
+// 攻撃エフェクト
+export interface AttackEffect {
+  id: string;
+  position: Position;
+  direction: Direction;
+  timestamp: number;
+}
+
 // ゲーム全体の状態
 export interface GameState {
   phase: GamePhase;
@@ -110,4 +118,5 @@ export interface GameState {
   messages: string[];
   turnCount: number;
   godMode: boolean;
+  attackEffects: AttackEffect[];
 }
