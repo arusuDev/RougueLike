@@ -14,9 +14,9 @@ interface PathNode {
     parent: PathNode | null;
 }
 
-// マンハッタン距離
+// チェビシェフ距離（斜め移動対応）
 function heuristic(x1: number, y1: number, x2: number, y2: number): number {
-    return Math.abs(x2 - x1) + Math.abs(y2 - y1);
+    return Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
 }
 
 // 移動可能かチェック
@@ -72,6 +72,10 @@ export function findPath(
         { x: 0, y: 1 },
         { x: -1, y: 0 },
         { x: 1, y: 0 },
+        { x: -1, y: -1 },
+        { x: 1, y: -1 },
+        { x: -1, y: 1 },
+        { x: 1, y: 1 },
     ];
 
     while (openList.length > 0) {
@@ -138,8 +142,8 @@ export function decideEnemyAction(
     const { x: ex, y: ey } = enemy.position;
     const { x: px, y: py } = playerPos;
 
-    // プレイヤーとの距離
-    const dist = Math.abs(px - ex) + Math.abs(py - ey);
+    // プレイヤーとの距離（チェビシェフ距離：斜め隣接も1）
+    const dist = Math.max(Math.abs(px - ex), Math.abs(py - ey));
 
     // 隣接していたら攻撃（移動しない）
     if (dist === 1) {
@@ -161,6 +165,10 @@ export function decideEnemyAction(
         { x: 0, y: 1 },
         { x: -1, y: 0 },
         { x: 1, y: 0 },
+        { x: -1, y: -1 },
+        { x: 1, y: -1 },
+        { x: -1, y: 1 },
+        { x: 1, y: 1 },
     ];
     const shuffled = directions.sort(() => Math.random() - 0.5);
 
