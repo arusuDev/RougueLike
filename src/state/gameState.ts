@@ -115,6 +115,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 position: startPos,
                 ...INITIAL_PLAYER_STATS,
                 inventory: [],
+                direction: 'down',
             };
         }
 
@@ -168,6 +169,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 expReward: stats.expReward,
                 speed: stats.speed,
                 maxAttacks: stats.maxAttacks,
+                direction: 'down',
             });
         }
 
@@ -276,6 +278,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
             // 攻撃
             const damage = Math.max(1, player.attack - targetEnemy.defense);
             targetEnemy.hp -= damage;
+            // 攻撃時もその方向を向く
+            set({
+                state: {
+                    ...state,
+                    player: { ...player, direction },
+                }
+            });
             addMessage(`${targetEnemy.name}に${damage}のダメージ！`);
 
             if (targetEnemy.hp <= 0) {
@@ -321,7 +330,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         } else {
             // 移動
             const newPosition: Position = { x: newX, y: newY };
-            const newPlayer = { ...player, position: newPosition };
+            const newPlayer = { ...player, position: newPosition, direction };
 
             // アイテムを拾う
             const pickedItem = items.find(
@@ -420,6 +429,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     }
                 } else {
                     // 移動
+                    const dx = newPos.x - enemy.position.x;
+                    const dy = newPos.y - enemy.position.y;
+                    let newDir = enemy.direction;
+
+                    if (dx === 0 && dy === -1) newDir = 'up';
+                    else if (dx === 0 && dy === 1) newDir = 'down';
+                    else if (dx === -1 && dy === 0) newDir = 'left';
+                    else if (dx === 1 && dy === 0) newDir = 'right';
+                    else if (dx === -1 && dy === -1) newDir = 'up-left';
+                    else if (dx === 1 && dy === -1) newDir = 'up-right';
+                    else if (dx === -1 && dy === 1) newDir = 'down-left';
+                    else if (dx === 1 && dy === 1) newDir = 'down-right';
+
+                    enemy.direction = newDir;
                     enemy.position = newPos;
                 }
             }

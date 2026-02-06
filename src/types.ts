@@ -46,6 +46,7 @@ export interface Player extends Entity {
   exp: number;
   expToNext: number;
   inventory: Item[];
+  direction: Direction;
 }
 
 // 敵の種類
@@ -63,6 +64,7 @@ export interface Enemy extends Entity {
   expReward: number;
   speed: number; // 行動速度（1=通常、2=倍速）
   maxAttacks: number; // 1ターンの最大攻撃回数
+  direction: Direction;
 }
 
 // アイテムの種類
