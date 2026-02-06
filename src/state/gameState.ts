@@ -274,6 +274,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     newPlayer.level++;
                     newPlayer.maxHp += LEVEL_UP_BONUS.hp;
                     newPlayer.hp = newPlayer.maxHp;
+                    newPlayer.maxSp += LEVEL_UP_BONUS.sp;
+                    newPlayer.sp = newPlayer.maxSp;
                     newPlayer.attack += LEVEL_UP_BONUS.attack;
                     newPlayer.defense += LEVEL_UP_BONUS.defense;
                     newPlayer.expToNext =
@@ -501,10 +503,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     player: {
                         ...s.state.player!,
                         hp: s.state.player!.maxHp,
+                        sp: s.state.player!.maxSp,
                     },
                 },
             }));
-            addMessage('HPを全回復しました！');
+            addMessage('HP・SPを全回復しました！');
         }
     },
 

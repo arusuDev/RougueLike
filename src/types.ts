@@ -40,6 +40,8 @@ export interface Player extends Entity {
   type: 'player';
   hp: number;
   maxHp: number;
+  sp: number;
+  maxSp: number;
   attack: number;
   defense: number;
   level: number;

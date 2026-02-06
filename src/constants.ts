@@ -22,6 +22,8 @@ export const SIGHT_RANGE = 6;
 export const INITIAL_PLAYER_STATS = {
     hp: 30,
     maxHp: 30,
+    sp: 20,
+    maxSp: 20,
     attack: 5,
     defense: 2,
     level: 1,
@@ -145,6 +147,7 @@ export const EXP_TABLE = [
 // レベルアップ時のステータス上昇
 export const LEVEL_UP_BONUS = {
     hp: 5,
+    sp: 3,
     attack: 1,
     defense: 1,
 };

@@ -9,6 +9,9 @@ export function HUD() {
     if (!player) return null;
 
     const hpPercent = (player.hp / player.maxHp) * 100;
+    const spPercent = player.maxSp > 0
+        ? (player.sp / player.maxSp) * 100
+        : 100;
     const expPercent = player.expToNext > 0
         ? (player.exp / player.expToNext) * 100
         : 100;
@@ -24,6 +27,19 @@ export function HUD() {
                     />
                     <span className="hud-bar-text">
                         {player.hp} / {player.maxHp}
+                    </span>
+                </div>
+            </div>
+
+            <div className="hud-section">
+                <div className="hud-label">SP</div>
+                <div className="hud-bar-container">
+                    <div
+                        className="hud-bar hud-bar-sp"
+                        style={{ width: `${spPercent}%` }}
+                    />
+                    <span className="hud-bar-text">
+                        {player.sp} / {player.maxSp}
                     </span>
                 </div>
             </div>

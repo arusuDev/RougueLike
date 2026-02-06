@@ -22,6 +22,7 @@
   --color-secondary: #44aaff;
   --color-danger: #ff4466;
   --color-warning: #ffaa44;
+  --color-sp: #44ddff;
   --color-exp: #aa88ff;
 
   /* フォント */
@@ -297,6 +298,11 @@ body {
 .hud-bar-hp {
   background: linear-gradient(180deg, var(--color-danger) 0%, #aa2244 100%);
   box-shadow: 0 0 10px rgba(255, 68, 102, 0.5);
+}
+
+.hud-bar-sp {
+  background: linear-gradient(180deg, var(--color-sp) 0%, #2299bb 100%);
+  box-shadow: 0 0 10px rgba(68, 221, 255, 0.5);
 }
 
 .hud-bar-exp {
