@@ -49,7 +49,7 @@ export interface Player extends Entity {
 }
 
 // 敵の種類
-export type EnemyKind = 'slime' | 'goblin' | 'skeleton' | 'zombie' | 'bat' | 'salamander';
+export type EnemyKind = 'slime' | 'goblin' | 'skeleton' | 'zombie' | 'bat' | 'salamander' | 'gigaSalamander';
 
 // 敵
 export interface Enemy extends Entity {
@@ -62,6 +62,7 @@ export interface Enemy extends Entity {
   defense: number;
   expReward: number;
   speed: number; // 行動速度（1=通常、2=倍速）
+  maxAttacks: number; // 1ターンの最大攻撃回数
 }
 
 // アイテムの種類

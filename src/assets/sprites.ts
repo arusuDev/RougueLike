@@ -7,7 +7,8 @@ import {
     skeleton,
     zombie,
     bat,
-    salamander
+    salamander,
+    gigaSalamander
 } from './sprites/enemies';
 
 export const ENEMY_SPRITES: Record<string, number[][]> = {
@@ -16,5 +17,6 @@ export const ENEMY_SPRITES: Record<string, number[][]> = {
     skeleton,
     zombie,
     bat,
-    salamander
+    salamander,
+    gigaSalamander
 };

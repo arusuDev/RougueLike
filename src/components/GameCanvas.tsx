@@ -292,6 +292,7 @@ function drawEnemy(
     else if (kind === 'goblin') subColor = (ENTITY_COLORS as any).goblinEye || '#ffff00';
     else if (kind === 'skeleton') subColor = (ENTITY_COLORS as any).skeletonEye || '#222222';
     else if (kind === 'salamander') subColor = (ENTITY_COLORS as any).salamanderEye || '#ffff00';
+    else if (kind === 'gigaSalamander') subColor = (ENTITY_COLORS as any).gigaSalamanderEye || '#ffaa00';
 
     for (let dy = 0; dy < spriteSize; dy++) {
         for (let dx = 0; dx < spriteSize; dx++) {

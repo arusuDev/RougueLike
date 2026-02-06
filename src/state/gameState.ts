@@ -150,6 +150,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             if (newFloorNumber >= 5) available.push('skeleton');
             if (newFloorNumber >= 7) available.push('zombie');
             if (newFloorNumber >= 5) available.push('salamander');
+            if (newFloorNumber >= 8) available.push('gigaSalamander');
 
             const kind = available[randomInt(0, available.length - 1)];
             const stats = ENEMY_STATS[kind];
@@ -166,6 +167,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 defense: stats.defense,
                 expReward: stats.expReward,
                 speed: stats.speed,
+                maxAttacks: stats.maxAttacks,
             });
         }
 
@@ -358,13 +360,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const updatedEnemies = [...enemies];
 
         for (const enemy of updatedEnemies) {
-            // 倍速モンスターは1ターンに speed 回行動（攻撃は1回のみ）
+            // 倍速モンスターは1ターンに speed 回行動
             const speed = enemy.speed || 1;
-            let hasAttacked = false;
+            const maxAttacks = enemy.maxAttacks || 1;
+            let attackCount = 0;
 
             for (let step = 0; step < speed; step++) {
-                // すでに攻撃済みなら追加行動しない（攻撃は1回のみ）
-                if (hasAttacked) break;
+                // 攻撃回数が上限に達したら追加行動しない
+                if (attackCount >= maxAttacks) break;
 
                 // 敵の行動を決定
                 const newPos = decideEnemyAction(enemy, currentPlayer.position, floor, updatedEnemies);
@@ -376,7 +379,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                         Math.abs(enemy.position.y - currentPlayer.position.y);
 
                     if (dist === 1) {
-                        hasAttacked = true;
+                        attackCount++;
                         if (state.godMode) {
                             addMessage(`${enemy.name}の攻撃を無効化！`);
                         } else {
