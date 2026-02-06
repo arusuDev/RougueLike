@@ -1,6 +1,6 @@
 // メインゲームキャンバス（ピクセルアート風描画）
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useGameStore } from '../state/gameState';
 import { useDebugStore } from '../state/debugState';
 import {
@@ -89,7 +89,35 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { state } = useGameStore();
     const { debug } = useDebugStore();
+    const [tick, setTick] = useState(0);
 
+    // 攻撃エフェクトのクリーンアップタイマー
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const currentState = useGameStore.getState().state;
+            const effects = currentState.attackEffects;
+
+            // エフェクトがある場合は再描画をトリガー
+            if (effects.length > 0) {
+                setTick(t => t + 1);
+            }
+
+            // 古いエフェクトを削除
+            const expired = effects.filter(e => now - e.timestamp > 500);
+            if (expired.length > 0) {
+                useGameStore.setState((s) => ({
+                    state: {
+                        ...s.state,
+                        attackEffects: s.state.attackEffects.filter(e => now - e.timestamp <= 500),
+                    },
+                }));
+            }
+        }, 30);
+        return () => clearInterval(interval);
+    }, []);
+
+    // tickを依存配列に追加して再描画を強制
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -184,7 +212,15 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
         if (diagonalMode) {
             drawDiagonalArrows(ctx, playerScreenX, playerScreenY);
         }
-    }, [state, debug, diagonalMode]);
+
+        // 攻撃エフェクトを描画（ストアから直接読み取り）
+        const currentEffects = useGameStore.getState().state.attackEffects;
+        for (const effect of currentEffects) {
+            const effectScreenX = effect.position.x * TILE_SIZE + offsetX;
+            const effectScreenY = effect.position.y * TILE_SIZE + offsetY;
+            drawAttackEffect(ctx, effectScreenX, effectScreenY, effect.direction);
+        }
+    }, [state, debug, diagonalMode, tick]);
 
     return (
         <canvas
@@ -432,3 +468,43 @@ function darken(color: string): string {
 
     return `rgb(${r},${g},${b})`;
 }
+
+// 攻撃エフェクト描画
+function drawAttackEffect(ctx: CanvasRenderingContext2D, x: number, y: number, _direction: Direction) {
+    const size = TILE_SIZE;
+    const centerX = x + size / 2;
+    const centerY = y + size / 2;
+
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = '#ffff00';
+    ctx.lineWidth = 4;
+    ctx.shadowColor = '#ff4400';
+    ctx.shadowBlur = 15;
+    ctx.lineCap = 'round';
+
+    // X型のスラッシュを描画（より見やすい）
+    const slashSize = size * 0.4;
+
+    // 斜め線1 (\)
+    ctx.beginPath();
+    ctx.moveTo(centerX - slashSize, centerY - slashSize);
+    ctx.lineTo(centerX + slashSize, centerY + slashSize);
+    ctx.stroke();
+
+    // 斜め線2 (/)
+    ctx.beginPath();
+    ctx.moveTo(centerX + slashSize, centerY - slashSize);
+    ctx.lineTo(centerX - slashSize, centerY + slashSize);
+    ctx.stroke();
+
+    // 中心に衝撃波
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, slashSize * 0.5, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+}
+

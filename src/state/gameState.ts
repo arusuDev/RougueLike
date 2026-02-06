@@ -10,6 +10,7 @@ import type {
     Position,
     EnemyKind,
     ItemKind,
+    AttackEffect,
 } from '../types';
 import { TileType } from '../types';
 import {
@@ -54,6 +55,7 @@ interface GameStore {
     processEnemyTurn: () => void;
     generateNewFloor: () => void;
     addMessage: (message: string) => void;
+    addAttackEffect: (position: Position, direction: Direction) => void;
 
     // デバッグアクション
     toggleGodMode: () => void;
@@ -72,6 +74,7 @@ const initialState: GameState = {
     messages: [],
     turnCount: 0,
     godMode: false,
+    attackEffects: [],
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -279,6 +282,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
             const damage = Math.max(1, player.attack - targetEnemy.defense);
             targetEnemy.hp -= damage;
 
+            // 攻撃エフェクト追加（set前に呼び出す）
+            get().addAttackEffect(targetEnemy.position, direction);
+
             // ダメージメッセージを先に追加
             addMessage(`${targetEnemy.name}に${damage}のダメージ！`);
 
@@ -404,6 +410,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
                     if (dist === 1) {
                         attackCount++;
+                        // 敵の攻撃方向を計算
+                        const atkDx = currentPlayer.position.x - enemy.position.x;
+                        const atkDy = currentPlayer.position.y - enemy.position.y;
+                        let atkDir: Direction = 'down';
+                        if (atkDx === 0 && atkDy === -1) atkDir = 'up';
+                        else if (atkDx === 0 && atkDy === 1) atkDir = 'down';
+                        else if (atkDx === -1 && atkDy === 0) atkDir = 'left';
+                        else if (atkDx === 1 && atkDy === 0) atkDir = 'right';
+                        else if (atkDx === -1 && atkDy === -1) atkDir = 'up-left';
+                        else if (atkDx === 1 && atkDy === -1) atkDir = 'up-right';
+                        else if (atkDx === -1 && atkDy === 1) atkDir = 'down-left';
+                        else if (atkDx === 1 && atkDy === 1) atkDir = 'down-right';
+
+                        // 攻撃エフェクト追加
+                        get().addAttackEffect(currentPlayer.position, atkDir);
+
                         if (state.godMode) {
                             addMessage(`${enemy.name}の攻撃を無効化！`);
                         } else {
@@ -530,6 +552,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
             state: {
                 ...s.state,
                 messages: [...s.state.messages.slice(-MAX_MESSAGES + 1), message],
+            },
+        }));
+    },
+
+    addAttackEffect: (position: Position, direction: Direction) => {
+        const effect: AttackEffect = {
+            id: generateId(),
+            position,
+            direction,
+            timestamp: Date.now(),
+        };
+        set((s) => ({
+            state: {
+                ...s.state,
+                attackEffects: [...s.state.attackEffects, effect],
             },
         }));
     },
