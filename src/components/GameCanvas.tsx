@@ -11,7 +11,7 @@ import {
     ENTITY_COLORS,
     SPRITE_CONFIG,
 } from '../constants';
-import type { TileType, Direction, AttackEffect } from '../types';
+import type { TileType, Direction } from '../types';
 import { TileType as TileTypeValue } from '../types';
 import { ENEMY_SPRITES } from '../assets/sprites';
 
@@ -100,7 +100,6 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
 
             // エフェクトがある場合は再描画をトリガー
             if (effects.length > 0) {
-                console.log('[DEBUG] タイマー: エフェクト数', effects.length);
                 setTick(t => t + 1);
             }
 
@@ -216,11 +215,9 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
 
         // 攻撃エフェクトを描画（ストアから直接読み取り）
         const currentEffects = useGameStore.getState().state.attackEffects;
-        console.log('[DEBUG] 描画時エフェクト数:', currentEffects.length, 'state.attackEffects:', state.attackEffects.length);
         for (const effect of currentEffects) {
             const effectScreenX = effect.position.x * TILE_SIZE + offsetX;
             const effectScreenY = effect.position.y * TILE_SIZE + offsetY;
-            console.log('[DEBUG] エフェクト描画:', effectScreenX, effectScreenY, effect);
             drawAttackEffect(ctx, effectScreenX, effectScreenY, effect.direction);
         }
     }, [state, debug, diagonalMode, tick]);
