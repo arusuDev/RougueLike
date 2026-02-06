@@ -37,6 +37,7 @@ export const ENEMY_STATS = {
         attack: 3,
         defense: 0,
         expReward: 3,
+        speed: 1,
     },
     goblin: {
         name: 'ゴブリン',
@@ -44,6 +45,7 @@ export const ENEMY_STATS = {
         attack: 5,
         defense: 1,
         expReward: 8,
+        speed: 1,
     },
     skeleton: {
         name: 'スケルトン',
@@ -51,6 +53,7 @@ export const ENEMY_STATS = {
         attack: 7,
         defense: 2,
         expReward: 15,
+        speed: 1,
     },
     zombie: {
         name: 'ゾンビ',
@@ -58,6 +61,7 @@ export const ENEMY_STATS = {
         attack: 5,
         defense: 1,
         expReward: 15,
+        speed: 1,
     },
     bat: {
         name: 'コウモリ',
@@ -65,6 +69,15 @@ export const ENEMY_STATS = {
         attack: 4,
         defense: 0,
         expReward: 5,
+        speed: 1,
+    },
+    salamander: {
+        name: 'サラマンダー',
+        hp: 24,
+        attack: 8,
+        defense: 2,
+        expReward: 20,
+        speed: 2,
     },
 };
 
@@ -123,7 +136,9 @@ export const ENTITY_COLORS = {
     slimeEye: '#ffffff',
     goblinEye: '#ffff00',
     skeletonEye: '#222222',
-}; // 赤い目
+    salamander: '#ff6600', // 炎のオレンジ
+    salamanderEye: '#ffff00',
+};
 
 // メッセージ最大保持数
 export const MAX_MESSAGES = 50;
