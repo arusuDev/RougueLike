@@ -11,6 +11,7 @@ import type {
     EnemyKind,
     ItemKind,
     AttackEffect,
+    GamePhase,
 } from '../types';
 import { TileType } from '../types';
 import {
@@ -27,6 +28,7 @@ import {
 import { generateDungeon, getPlayerStartPosition, getRandomFloorPosition } from '../dungeon/generator';
 import { computeVisibility } from '../dungeon/visibility';
 import { decideEnemyAction } from '../ai/enemyAI';
+import { getDungeon, type DungeonId } from '../data/dungeons';
 
 // ユニークID生成
 let entityIdCounter = 0;
@@ -41,10 +43,12 @@ function randomInt(min: number, max: number): number {
 
 interface GameStore {
     state: GameState;
+    currentDungeonId: DungeonId | null;
 
     // ゲーム制御
-    startGame: () => void;
+    startGame: (dungeonId: DungeonId) => void;
     resetGame: () => void;
+    setPhase: (phase: GamePhase) => void;
 
     // プレイヤー操作
     movePlayer: (direction: Direction) => void;
@@ -79,9 +83,11 @@ const initialState: GameState = {
 
 export const useGameStore = create<GameStore>((set, get) => ({
     state: initialState,
+    currentDungeonId: null,
 
-    startGame: () => {
+    startGame: (dungeonId: DungeonId) => {
         const store = get();
+        set({ currentDungeonId: dungeonId });
         store.generateNewFloor();
         set((s) => ({
             state: {
@@ -89,12 +95,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 phase: 'playing',
             },
         }));
-        store.addMessage('ダンジョンに足を踏み入れた！');
+        const dungeon = getDungeon(dungeonId);
+        store.addMessage(`『${dungeon.name}』に足を踏み入れた！`);
     },
 
     resetGame: () => {
         entityIdCounter = 0;
-        set({ state: initialState });
+        set({ state: initialState, currentDungeonId: null });
+    },
+
+    setPhase: (phase: GamePhase) => {
+        set((s) => ({
+            state: {
+                ...s.state,
+                phase,
+            },
+        }));
     },
 
     generateNewFloor: () => {
@@ -608,13 +624,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
 // 階段を降りる処理
 export function descendStairs() {
     const store = useGameStore.getState();
-    const { state, generateNewFloor, addMessage } = store;
+    const { state, generateNewFloor, addMessage, currentDungeonId } = store;
 
     if (!state.player || !state.floor) return;
 
     const { x, y } = state.player.position;
-    if (state.floor.tiles[y][x].type === TileType.Stairs) {
-        addMessage('階段を降りた...');
-        generateNewFloor();
+    if (state.floor.tiles[y][x].type !== TileType.Stairs) return;
+
+    // 最終階チェック
+    if (currentDungeonId) {
+        const dungeon = getDungeon(currentDungeonId);
+        if (state.floorNumber >= dungeon.floors) {
+            // ダンジョンクリア！リザルト画面へ
+            addMessage('ダンジョンから脱出した！');
+            useGameStore.setState((s) => ({
+                state: {
+                    ...s.state,
+                    phase: 'result',
+                },
+            }));
+            return;
+        }
     }
+
+    // 通常の階段降下
+    addMessage('階段を降りた...');
+    generateNewFloor();
 }

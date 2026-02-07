@@ -97,7 +97,7 @@ export interface DungeonFloor {
 }
 
 // ゲームフェーズ
-export type GamePhase = 'title' | 'playing' | 'inventory' | 'gameover';
+export type GamePhase = 'title' | 'dungeon-select' | 'playing' | 'inventory' | 'gameover' | 'result';
 
 // 攻撃エフェクト
 export interface AttackEffect {

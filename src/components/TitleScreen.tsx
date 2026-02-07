@@ -3,7 +3,11 @@
 import { useGameStore } from '../state/gameState';
 
 export function TitleScreen() {
-    const { startGame } = useGameStore();
+    const { setPhase } = useGameStore();
+
+    const handleStart = () => {
+        setPhase('dungeon-select');
+    };
 
     return (
         <div className="title-screen">
@@ -16,7 +20,7 @@ export function TitleScreen() {
                 <div className="title-subtitle">A Mystery Dungeon Adventure</div>
 
                 <div className="title-menu">
-                    <button className="title-button" onClick={startGame}>
+                    <button className="title-button" onClick={handleStart}>
                         <span className="title-button-icon">▶</span>
                         ゲームスタート
                     </button>

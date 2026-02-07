@@ -1,12 +1,12 @@
 /* 不思議なダンジョン - ピクセルアート風スタイル */
 
-/* Google Fonts - ピクセル風フォント */
+/* Google Fonts - ピクセル風フォンチE*/
 @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 /* CSS カスタムプロパティ */
 :root {
-  /* カラーパレット */
+  /* カラーパレチE�� */
   --color-bg: #0a0a14;
   --color-bg-light: #12121f;
   --color-bg-panel: #1a1a2e;
@@ -24,7 +24,7 @@
   --color-warning: #ffaa44;
   --color-exp: #aa88ff;
 
-  /* フォント */
+  /* フォンチE*/
   --font-pixel: 'DotGothic16', 'MS Gothic', monospace;
   --font-title: 'Press Start 2P', monospace;
 
@@ -37,7 +37,7 @@
   --spacing-xl: 32px;
 }
 
-/* リセット */
+/* リセチE�� */
 *,
 *::before,
 *::after {
@@ -65,7 +65,7 @@ body {
   height: 100%;
 }
 
-/* アプリケーションコンテナ */
+/* アプリケーションコンチE�� */
 .app {
   width: 100%;
   height: 100%;
@@ -360,7 +360,7 @@ body {
 }
 
 /* =========================================
-   メッセージログ
+   メチE��ージログ
    ========================================= */
 .message-log {
   width: 100%;
@@ -540,7 +540,7 @@ body {
 }
 
 /* =========================================
-   ゲームオーバー
+   ゲームオーバ�E
    ========================================= */
 .gameover-overlay {
   position: fixed;
@@ -655,7 +655,7 @@ body {
 }
 
 /* =========================================
-   スクロールバー
+   スクロールバ�E
    ========================================= */
 ::-webkit-scrollbar {
   width: 8px;
@@ -675,7 +675,7 @@ body {
 }
 
 /* =========================================
-   デバッグパネル
+   チE��チE��パネル
    ========================================= */
 .debug-panel {
   position: absolute;
@@ -761,4 +761,235 @@ body {
 .debug-shortcuts .debug-info {
   margin-bottom: 0;
   font-size: 10px;
+}
+/* �_���W�����I����� */
+.dungeon-select-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-light) 100%);
+}
+
+.dungeon-select-title {
+  font-family: var(--font-title);
+  font-size: 36px;
+  color: var(--color-text-highlight);
+  text-shadow: 0 0 10px var(--color-text-highlight), 0 4px 0 #cc9944;
+  margin: 0;
+}
+
+.dp-display {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-bg-panel);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+}
+
+.dp-label { font-size: 16px; color: var(--color-text-dim); }
+.dp-value { font-size: 24px; font-weight: bold; color: var(--color-primary); }
+
+.dungeon-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  max-width: 1000px;
+}
+
+.dungeon-card {
+  position: relative;
+  width: 280px;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-panel);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dungeon-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 221, 136, 0.2);
+}
+
+.dungeon-card.cleared { border-color: var(--color-success); }
+.dungeon-card.cleared:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(102, 221, 136, 0.2); }
+
+.cleared-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-bg);
+  background: var(--color-success);
+  border-radius: 4px;
+  transform: rotate(5deg);
+}
+
+.dungeon-name {
+  font-family: var(--font-title);
+  font-size: 20px;
+  color: var(--color-text-highlight);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.dungeon-info { display: flex; flex-direction: column; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); }
+.dungeon-floors, .dungeon-difficulty, .dungeon-recommended { display: flex; justify-content: space-between; font-size: 14px; }
+.info-label { color: var(--color-text-dim); }
+.info-value { color: var(--color-text); }
+.info-value.stars { color: var(--color-primary); letter-spacing: 2px; }
+
+.dungeon-description { font-size: 12px; color: var(--color-text-dim); line-height: 1.6; margin: 0; }
+
+.dungeon-select-actions { margin-top: var(--spacing-lg); }
+
+.btn-back {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* ���U���g��� */
+.result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 30, 35, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: overlayFadeIn 0.5s ease;
+}
+
+.result-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl) 60px;
+  background: var(--color-bg-panel);
+  border: 2px solid var(--color-success);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 40px rgba(102, 221, 136, 0.3);
+}
+
+.result-title {
+  font-family: var(--font-title);
+  font-size: 36px;
+  color: var(--color-success);
+  text-shadow: 0 0 20px rgba(102, 221, 136, 0.5);
+  margin: 0;
+}
+
+.result-dungeon-name {
+  font-family: var(--font-title);
+  font-size: 20px;
+  color: var(--color-text-highlight);
+}
+
+.result-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  min-width: 300px;
+}
+
+.result-section {
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
+
+.result-section-title {
+  font-size: 14px;
+  color: var(--color-text-dim);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs) 0;
+}
+
+.result-label { color: var(--color-text); }
+.result-value { color: var(--color-text-highlight); }
+.result-value.dp { color: var(--color-primary); }
+
+.result-dp {
+  border-top: 1px dashed var(--color-border);
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-sm);
+}
+
+.result-total {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: linear-gradient(90deg, rgba(255, 221, 136, 0.1) 0%, rgba(255, 221, 136, 0.2) 100%);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+}
+
+.result-total-label { font-size: 18px; color: var(--color-text); }
+.result-total-value { font-size: 24px; font-weight: bold; color: var(--color-primary); }
+
+.result-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.result-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.result-button-continue {
+  color: #1a1a1f;
+  background: linear-gradient(180deg, #fffacc 0%, #ffdd88 100%);
+  border: none;
+  box-shadow: 0 4px 0 #ccaa55, 0 0 20px rgba(255, 221, 136, 0.5);
+}
+
+.result-button-continue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #ccaa55, 0 0 30px rgba(255, 221, 136, 0.7);
+}
+
+.result-button-title {
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.result-button-title:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
