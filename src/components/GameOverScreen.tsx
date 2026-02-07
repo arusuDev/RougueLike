@@ -3,12 +3,12 @@
 import { useGameStore } from '../state/gameState';
 
 export function GameOverScreen() {
-    const { state, resetGame, startGame } = useGameStore();
+    const { state, resetGame, setPhase } = useGameStore();
     const { floorNumber, turnCount } = state;
 
     const handleRetry = () => {
         resetGame();
-        startGame();
+        setPhase('dungeon-select');
     };
 
     const handleTitle = () => {

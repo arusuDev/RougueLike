@@ -9,11 +9,15 @@ import { MessageLog } from './components/MessageLog';
 import { Inventory } from './components/Inventory';
 import { GameOverScreen } from './components/GameOverScreen';
 import { DebugPanel } from './components/DebugPanel';
+import { DungeonSelect } from './components/DungeonSelect';
+import { ResultScreen } from './components/ResultScreen';
+import { SkillTreeScreen } from './components/SkillTreeScreen';
 import { useDebugStore } from './state/debugState';
 import type { Direction } from './types';
+import type { DungeonId } from './data/dungeons/index';
 
 function App() {
-  const { state, movePlayer, toggleInventory, toggleGodMode, fullHeal, nextFloor } = useGameStore();
+  const { state, movePlayer, toggleInventory, toggleGodMode, fullHeal, nextFloor, startGame, setPhase } = useGameStore();
   const { debug, toggleDebug, toggleFullMap } = useDebugStore();
   const { phase } = state;
 
@@ -186,9 +190,41 @@ function App() {
     };
   }, [phase, movePlayer, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
 
+  // ダンジョン選択ハンドラ
+  const handleSelectDungeon = (dungeonId: DungeonId) => {
+    startGame(dungeonId);
+  };
+
+  // タイトルに戻るハンドラ
+  const handleBackToTitle = () => {
+    setPhase('title');
+  };
+
+  // スキルツリーへ
+  const handleOpenSkillTree = () => {
+    setPhase('skill-tree');
+  };
+
+  // ダンジョン選択へ戻る
+  const handleBackToDungeonSelect = () => {
+    setPhase('dungeon-select');
+  };
+
   return (
     <div className="app">
       {phase === 'title' && <TitleScreen />}
+
+      {phase === 'dungeon-select' && (
+        <DungeonSelect
+          onSelectDungeon={handleSelectDungeon}
+          onBack={handleBackToTitle}
+          onSkillTree={handleOpenSkillTree}
+        />
+      )}
+
+      {phase === 'skill-tree' && (
+        <SkillTreeScreen onBack={handleBackToDungeonSelect} />
+      )}
 
       {(phase === 'playing' || phase === 'inventory') && (
         <div className="game-screen">
@@ -204,6 +240,8 @@ function App() {
       )}
 
       {phase === 'gameover' && <GameOverScreen />}
+
+      {phase === 'result' && <ResultScreen />}
 
       <DebugPanel />
     </div>
