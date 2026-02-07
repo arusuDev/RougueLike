@@ -1,12 +1,21 @@
 // タイトル画面
 
 import { useGameStore } from '../state/gameState';
+import { usePersistentStore } from '../state/persistentState';
 
 export function TitleScreen() {
     const { setPhase } = useGameStore();
+    const { resetAllData } = usePersistentStore();
 
     const handleStart = () => {
         setPhase('dungeon-select');
+    };
+
+    const handleResetData = () => {
+        if (window.confirm('本当にすべてのセーブデータを初期化しますか？\n（DP、スキル、クリア状況がすべて消去されます）')) {
+            resetAllData();
+            alert('セーブデータを初期化しました。');
+        }
     };
 
     return (
@@ -23,6 +32,10 @@ export function TitleScreen() {
                     <button className="title-button" onClick={handleStart}>
                         <span className="title-button-icon">▶</span>
                         ゲームスタート
+                    </button>
+                    <button className="title-button title-button-danger" onClick={handleResetData}>
+                        <span className="title-button-icon">⚠</span>
+                        データ初期化
                     </button>
                 </div>
 
@@ -48,7 +61,7 @@ export function TitleScreen() {
             </div>
 
             <div className="title-footer">
-                <span>© 2026 Mystery Dungeon Game</span>
+                <span>© 2026 Emeria Developers Game</span>
             </div>
         </div>
     );

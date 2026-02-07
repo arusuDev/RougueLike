@@ -30,7 +30,7 @@ import { computeVisibility } from '../dungeon/visibility';
 import { decideEnemyAction } from '../ai/enemyAI';
 import { calculateStatBonuses } from '../data/skillTree';
 import { usePersistentStore } from './persistentState';
-import { getDungeon, type DungeonId } from '../data/dungeons';
+import { getDungeon, getAvailableEnemies, type DungeonId } from '../data/dungeons/index';
 
 // ユニークID生成
 let entityIdCounter = 0;
@@ -170,19 +170,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
             }
             if (!pos) continue;
 
-            // 階層に応じた敵を選択
-            // Floor 1: Slime
-            // Floor 2-4: Slime, Bat, Goblin
-            // Floor 5-6: Slime, Bat, Goblin, Skeleton
-            // Floor 7+: All including Zombie
-
-            const available: EnemyKind[] = ['slime'];
-            if (newFloorNumber >= 2) available.push('bat');
-            if (newFloorNumber >= 3) available.push('goblin');
-            if (newFloorNumber >= 5) available.push('skeleton');
-            if (newFloorNumber >= 7) available.push('zombie');
-            if (newFloorNumber >= 5) available.push('salamander');
-            if (newFloorNumber >= 8) available.push('gigaSalamander');
+            // 階層に応じた敵を選択（ダンジョン設定から取得）
+            const dungeonId = get().currentDungeonId;
+            const dungeon = dungeonId ? getDungeon(dungeonId) : null;
+            const available = dungeon
+                ? getAvailableEnemies(dungeon, newFloorNumber)
+                : ['slime'] as EnemyKind[];
 
             const kind = available[randomInt(0, available.length - 1)];
             const stats = ENEMY_STATS[kind];

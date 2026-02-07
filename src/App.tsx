@@ -14,7 +14,7 @@ import { ResultScreen } from './components/ResultScreen';
 import { SkillTreeScreen } from './components/SkillTreeScreen';
 import { useDebugStore } from './state/debugState';
 import type { Direction } from './types';
-import type { DungeonId } from './data/dungeons';
+import type { DungeonId } from './data/dungeons/index';
 
 function App() {
   const { state, movePlayer, toggleInventory, toggleGodMode, fullHeal, nextFloor, startGame, setPhase } = useGameStore();

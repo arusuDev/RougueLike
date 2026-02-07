@@ -1,6 +1,6 @@
 // ダンジョン選択画面
 
-import { DUNGEON_LIST, getDungeon, type DungeonId } from '../data/dungeons';
+import { DUNGEON_LIST, getDungeon, type DungeonId } from '../data/dungeons/index';
 import { usePersistentStore } from '../state/persistentState';
 
 interface DungeonSelectProps {

@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { loadSaveData, saveSaveData, clearSaveData } from '../data/saveData';
 import type { SaveData, DungeonProgress } from '../data/saveData';
-import type { DungeonId } from '../data/dungeons';
+import type { DungeonId } from '../data/dungeons/index';
 
 interface PersistentStore {
     // State

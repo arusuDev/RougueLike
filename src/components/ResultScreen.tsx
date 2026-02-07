@@ -2,7 +2,7 @@
 
 import { useGameStore } from '../state/gameState';
 import { usePersistentStore } from '../state/persistentState';
-import { getDungeon } from '../data/dungeons';
+import { getDungeon } from '../data/dungeons/index';
 import { calculateTotalDP, type DPCalculationResult } from '../data/dpCalculation';
 import { useEffect, useState } from 'react';
 

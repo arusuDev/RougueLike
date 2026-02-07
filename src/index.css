@@ -1,12 +1,12 @@
-/* 不思議なダンジョン - ピクセルアート風スタイル */
+/* 荳肴晁ｭｰ縺ｪ繝繝ｳ繧ｸ繝ｧ繝ｳ - 繝斐け繧ｻ繝ｫ繧｢繝ｼ繝磯｢ｨ繧ｹ繧ｿ繧､繝ｫ */
 
-/* Google Fonts - ピクセル風フォンチE*/
+/* Google Fonts - 繝斐け繧ｻ繝ｫ鬚ｨ繝輔か繝ｳ繝・*/
 @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* CSS カスタムプロパティ */
+/* CSS 繧ｫ繧ｹ繧ｿ繝�繝励Ο繝代ユ繧｣ */
 :root {
-  /* カラーパレチE�� */
+  /* 繧ｫ繝ｩ繝ｼ繝代Ξ繝・ヨ */
   --color-bg: #0a0a14;
   --color-bg-light: #12121f;
   --color-bg-panel: #1a1a2e;
@@ -24,11 +24,11 @@
   --color-warning: #ffaa44;
   --color-exp: #aa88ff;
 
-  /* フォンチE*/
+  /* 繝輔か繝ｳ繝・*/
   --font-pixel: 'DotGothic16', 'MS Gothic', monospace;
   --font-title: 'Press Start 2P', monospace;
 
-  /* サイズ */
+  /* 繧ｵ繧､繧ｺ */
   --border-radius: 4px;
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -37,7 +37,7 @@
   --spacing-xl: 32px;
 }
 
-/* リセチE�� */
+/* 繝ｪ繧ｻ繝・ヨ */
 *,
 *::before,
 *::after {
@@ -65,7 +65,7 @@ body {
   height: 100%;
 }
 
-/* アプリケーションコンチE�� */
+/* 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ繧ｳ繝ｳ繝・リ */
 .app {
   width: 100%;
   height: 100%;
@@ -77,7 +77,7 @@ body {
 }
 
 /* =========================================
-   タイトル画面
+   繧ｿ繧､繝医Ν逕ｻ髱｢
    ========================================= */
 .title-screen {
   width: 100%;
@@ -133,6 +133,9 @@ body {
 }
 
 .title-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: var(--spacing-lg);
 }
 
@@ -225,7 +228,7 @@ body {
 }
 
 /* =========================================
-   ゲーム画面
+   繧ｲ繝ｼ繝�逕ｻ髱｢
    ========================================= */
 .game-screen {
   display: flex;
@@ -360,7 +363,7 @@ body {
 }
 
 /* =========================================
-   メチE��ージログ
+   繝｡繝・そ繝ｼ繧ｸ繝ｭ繧ｰ
    ========================================= */
 .message-log {
   width: 100%;
@@ -400,7 +403,7 @@ body {
 }
 
 /* =========================================
-   インベントリ
+   繧､繝ｳ繝吶Φ繝医Μ
    ========================================= */
 .inventory-overlay {
   position: fixed;
@@ -540,7 +543,7 @@ body {
 }
 
 /* =========================================
-   ゲームオーバ�E
+   繧ｲ繝ｼ繝�繧ｪ繝ｼ繝舌・
    ========================================= */
 .gameover-overlay {
   position: fixed;
@@ -655,7 +658,7 @@ body {
 }
 
 /* =========================================
-   スクロールバ�E
+   繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ繝舌・
    ========================================= */
 ::-webkit-scrollbar {
   width: 8px;
@@ -675,7 +678,7 @@ body {
 }
 
 /* =========================================
-   チE��チE��パネル
+   繝・ヰ繝・げ繝代ロ繝ｫ
    ========================================= */
 .debug-panel {
   position: absolute;
@@ -762,7 +765,8 @@ body {
   margin-bottom: 0;
   font-size: 10px;
 }
-/* �_���W�����I����� */
+
+/* ダンジョン選択画面 */
 .dungeon-select-screen {
   display: flex;
   flex-direction: column;
@@ -791,8 +795,16 @@ body {
   border-radius: var(--border-radius);
 }
 
-.dp-label { font-size: 16px; color: var(--color-text-dim); }
-.dp-value { font-size: 24px; font-weight: bold; color: var(--color-primary); }
+.dp-label {
+  font-size: 16px;
+  color: var(--color-text-dim);
+}
+
+.dp-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
 
 .dungeon-list {
   display: flex;
@@ -819,8 +831,13 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 221, 136, 0.2);
 }
 
-.dungeon-card.cleared { border-color: var(--color-success); }
-.dungeon-card.cleared:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(102, 221, 136, 0.2); }
+.dungeon-card.cleared {
+  border-color: var(--color-success);
+}
+
+.dungeon-card.cleared:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(102, 221, 136, 0.2);
+}
 
 
 
@@ -831,15 +848,44 @@ body {
   margin: 0 0 var(--spacing-md) 0;
 }
 
-.dungeon-info { display: flex; flex-direction: column; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); }
-.dungeon-floors, .dungeon-difficulty, .dungeon-recommended { display: flex; justify-content: space-between; font-size: 14px; }
-.info-label { color: var(--color-text-dim); }
-.info-value { color: var(--color-text); }
-.info-value.stars { color: var(--color-primary); letter-spacing: 2px; }
+.dungeon-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
 
-.dungeon-description { font-size: 12px; color: var(--color-text-dim); line-height: 1.6; margin: 0; }
+.dungeon-floors,
+.dungeon-difficulty,
+.dungeon-recommended {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
 
-.dungeon-select-actions { margin-top: var(--spacing-lg); }
+.info-label {
+  color: var(--color-text-dim);
+}
+
+.info-value {
+  color: var(--color-text);
+}
+
+.info-value.stars {
+  color: var(--color-primary);
+  letter-spacing: 2px;
+}
+
+.dungeon-description {
+  font-size: 12px;
+  color: var(--color-text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dungeon-select-actions {
+  margin-top: var(--spacing-lg);
+}
 
 .btn-back {
   padding: var(--spacing-md) var(--spacing-xl);
@@ -853,9 +899,12 @@ body {
   transition: all 0.2s ease;
 }
 
-.btn-back:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.btn-back:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
 
-/* ���U���g��� */
+/* リザルト画面 */
 .result-overlay {
   position: fixed;
   top: 0;
@@ -923,9 +972,17 @@ body {
   padding: var(--spacing-xs) 0;
 }
 
-.result-label { color: var(--color-text); }
-.result-value { color: var(--color-text-highlight); }
-.result-value.dp { color: var(--color-primary); }
+.result-label {
+  color: var(--color-text);
+}
+
+.result-value {
+  color: var(--color-text-highlight);
+}
+
+.result-value.dp {
+  color: var(--color-primary);
+}
 
 .result-dp {
   border-top: 1px dashed var(--color-border);
@@ -942,8 +999,16 @@ body {
   border-radius: var(--border-radius);
 }
 
-.result-total-label { font-size: 18px; color: var(--color-text); }
-.result-total-value { font-size: 24px; font-weight: bold; color: var(--color-primary); }
+.result-total-label {
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.result-total-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
 
 .result-buttons {
   display: flex;
@@ -982,7 +1047,8 @@ body {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
-/* �X�L���c���[��� */
+
+/* スキルツリー画面 */
 .skill-tree-screen {
   display: flex;
   flex-direction: column;
@@ -1016,7 +1082,10 @@ body {
   border-radius: var(--border-radius);
 }
 
-.bonus-item { color: var(--color-success); font-size: 14px; }
+.bonus-item {
+  color: var(--color-success);
+  font-size: 14px;
+}
 
 .skill-tree-branches {
   display: flex;
@@ -1044,20 +1113,38 @@ body {
   margin-bottom: var(--spacing-sm);
 }
 
-.branch-hp .skill-branch-title { color: #66dd88; }
-.branch-attack .skill-branch-title { color: #dd6666; }
-.branch-defense .skill-branch-title { color: #6688dd; }
+.branch-hp .skill-branch-title {
+  color: #66dd88;
+}
 
-.skill-tier { display: flex; gap: var(--spacing-sm); }
-.skill-tier-split { gap: var(--spacing-md); }
+.branch-attack .skill-branch-title {
+  color: #dd6666;
+}
 
-.skill-arrow, .skill-arrow-split {
+.branch-defense .skill-branch-title {
+  color: #6688dd;
+}
+
+.skill-tier {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.skill-tier-split {
+  gap: var(--spacing-md);
+}
+
+.skill-arrow,
+.skill-arrow-split {
   color: var(--color-text-dim);
   font-size: 20px;
   text-align: center;
 }
 
-.skill-arrow-split { display: flex; gap: var(--spacing-xl); }
+.skill-arrow-split {
+  display: flex;
+  gap: var(--spacing-xl);
+}
 
 .skill-card {
   width: 140px;
@@ -1090,7 +1177,9 @@ body {
   opacity: 0.7;
 }
 
-.skill-card.skill-locked { opacity: 0.4; }
+.skill-card.skill-locked {
+  opacity: 0.4;
+}
 
 .skill-name {
   font-size: 14px;
@@ -1112,9 +1201,13 @@ body {
   font-weight: bold;
 }
 
-.skill-unlocked .skill-cost { color: var(--color-success); }
+.skill-unlocked .skill-cost {
+  color: var(--color-success);
+}
 
-.skill-tree-actions { margin-top: var(--spacing-lg); }
+.skill-tree-actions {
+  margin-top: var(--spacing-lg);
+}
 
 .btn-skill-tree {
   padding: var(--spacing-md) var(--spacing-xl);
@@ -1158,4 +1251,25 @@ body {
   transform: rotate(5deg);
   box-shadow: 0 0 10px rgba(255, 238, 136, 0.5);
   text-shadow: 0 0 5px rgba(255, 238, 136, 0.8);
+}
+
+/* データ初期化ボタン */
+.title-button-danger {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-dim);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-xl);
+  font-size: 14px;
+  justify-content: center;
+  text-align: center;
+}
+
+.title-button-danger .title-button-icon {
+  display: none;
+}
+
+.title-button-danger:hover {
+  border-color: var(--color-text-dim);
+  color: var(--color-text);
 }
