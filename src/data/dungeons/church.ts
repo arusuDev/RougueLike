@@ -17,5 +17,6 @@ export const CHURCH_DUNGEON: DungeonDefinition = {
         { floor: 4, enemies: ['skeleton', 'zombie', 'salamander'] },
         { floor: 7, enemies: ['zombie', 'salamander', 'gigaSalamander'] },
         { floor: 10, enemies: ['salamander', 'gigaSalamander', 'zombie'] },
+        { floor: 13, enemies: ['gigaSalamander'] },
     ],
 };

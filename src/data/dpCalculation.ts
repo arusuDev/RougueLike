@@ -4,9 +4,9 @@ import type { Player, Item } from '../types';
 
 // アイテムのDP価値定義
 export const ITEM_DP_VALUES: Record<string, number> = {
-    potion: 5,      // 回復薬
-    scroll: 20,     // 巻物
-    weapon: 10,     // 武器
+    potion: 1,      // 回復薬
+    scroll: 4,      // 巻物
+    weapon: 2,      // 武器
 };
 
 // DP計算結果
@@ -21,9 +21,9 @@ export interface DPCalculationResult {
     }[];
 }
 
-// 経験値からDPを計算（経験値 ÷ 10、端数切り捨て）
+// 経験値からDPを計算（経験値 ÷ 50、端数切り捨て）
 export function calculateExpDP(player: Player): number {
-    return Math.floor(player.exp / 10);
+    return Math.floor(player.exp / 50);
 }
 
 // アイテムからDPを計算

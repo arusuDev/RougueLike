@@ -4,19 +4,21 @@ import { useGameStore } from '../state/gameState';
 import { usePersistentStore } from '../state/persistentState';
 import { getDungeon } from '../data/dungeons/index';
 import { calculateTotalDP, type DPCalculationResult } from '../data/dpCalculation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export function ResultScreen() {
     const { state, resetGame, setPhase, currentDungeonId } = useGameStore();
     const { addDP, markDungeonCleared, incrementClears } = usePersistentStore();
     const [dpResult, setDpResult] = useState<DPCalculationResult | null>(null);
-    const [dpAwarded, setDpAwarded] = useState(false);
+    const dpAwardedRef = useRef(false);
 
     const dungeon = currentDungeonId ? getDungeon(currentDungeonId) : null;
 
-    // DP計算と付与
+    // DP計算と付与（一度だけ実行）
     useEffect(() => {
-        if (state.player && !dpAwarded) {
+        if (state.player && !dpAwardedRef.current) {
+            dpAwardedRef.current = true;  // 最初にフラグを立てる
+
             const result = calculateTotalDP(state.player);
             setDpResult(result);
 
@@ -30,10 +32,8 @@ export function ResultScreen() {
 
             // 統計更新
             incrementClears();
-
-            setDpAwarded(true);
         }
-    }, [state.player, dpAwarded, addDP, markDungeonCleared, incrementClears, currentDungeonId]);
+    }, [state.player, addDP, markDungeonCleared, incrementClears, currentDungeonId]);
 
     const handleToDungeonSelect = () => {
         resetGame();
