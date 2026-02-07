@@ -28,6 +28,8 @@ import {
 import { generateDungeon, getPlayerStartPosition, getRandomFloorPosition } from '../dungeon/generator';
 import { computeVisibility } from '../dungeon/visibility';
 import { decideEnemyAction } from '../ai/enemyAI';
+import { calculateStatBonuses } from '../data/skillTree';
+import { usePersistentStore } from './persistentState';
 import { getDungeon, type DungeonId } from '../data/dungeons';
 
 // ユニークID生成
@@ -128,11 +130,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 position: startPos,
             };
         } else {
+            // スキルツリーのボーナスを適用
+            const persistentState = usePersistentStore.getState();
+            const bonuses = calculateStatBonuses(persistentState.saveData.unlockedSkills);
+
             player = {
                 id: generateId(),
                 type: 'player',
                 position: startPos,
-                ...INITIAL_PLAYER_STATS,
+                maxHp: INITIAL_PLAYER_STATS.maxHp + bonuses.hp,
+                hp: INITIAL_PLAYER_STATS.maxHp + bonuses.hp,
+                attack: INITIAL_PLAYER_STATS.attack + bonuses.attack,
+                defense: INITIAL_PLAYER_STATS.defense + bonuses.defense,
+                level: INITIAL_PLAYER_STATS.level,
+                exp: INITIAL_PLAYER_STATS.exp,
+                expToNext: INITIAL_PLAYER_STATS.expToNext,
                 inventory: [],
                 direction: 'down',
             };

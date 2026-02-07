@@ -11,6 +11,7 @@ import { GameOverScreen } from './components/GameOverScreen';
 import { DebugPanel } from './components/DebugPanel';
 import { DungeonSelect } from './components/DungeonSelect';
 import { ResultScreen } from './components/ResultScreen';
+import { SkillTreeScreen } from './components/SkillTreeScreen';
 import { useDebugStore } from './state/debugState';
 import type { Direction } from './types';
 import type { DungeonId } from './data/dungeons';
@@ -199,6 +200,16 @@ function App() {
     setPhase('title');
   };
 
+  // スキルツリーへ
+  const handleOpenSkillTree = () => {
+    setPhase('skill-tree');
+  };
+
+  // ダンジョン選択へ戻る
+  const handleBackToDungeonSelect = () => {
+    setPhase('dungeon-select');
+  };
+
   return (
     <div className="app">
       {phase === 'title' && <TitleScreen />}
@@ -207,7 +218,12 @@ function App() {
         <DungeonSelect
           onSelectDungeon={handleSelectDungeon}
           onBack={handleBackToTitle}
+          onSkillTree={handleOpenSkillTree}
         />
+      )}
+
+      {phase === 'skill-tree' && (
+        <SkillTreeScreen onBack={handleBackToDungeonSelect} />
       )}
 
       {(phase === 'playing' || phase === 'inventory') && (

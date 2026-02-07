@@ -6,9 +6,10 @@ import { usePersistentStore } from '../state/persistentState';
 interface DungeonSelectProps {
     onSelectDungeon: (dungeonId: DungeonId) => void;
     onBack: () => void;
+    onSkillTree: () => void;
 }
 
-export function DungeonSelect({ onSelectDungeon, onBack }: DungeonSelectProps) {
+export function DungeonSelect({ onSelectDungeon, onBack, onSkillTree }: DungeonSelectProps) {
     const { saveData } = usePersistentStore();
 
     // 難易度を星で表示
@@ -23,6 +24,9 @@ export function DungeonSelect({ onSelectDungeon, onBack }: DungeonSelectProps) {
             <div className="dp-display">
                 <span className="dp-label">所持DP:</span>
                 <span className="dp-value">{saveData.currentDP}</span>
+                <span className="dp-separator">|</span>
+                <span className="dp-label">累計獲得:</span>
+                <span className="dp-value-sub">{saveData.totalDP}</span>
             </div>
 
             <div className="dungeon-list">
@@ -66,6 +70,9 @@ export function DungeonSelect({ onSelectDungeon, onBack }: DungeonSelectProps) {
             </div>
 
             <div className="dungeon-select-actions">
+                <button className="btn-skill-tree" onClick={onSkillTree}>
+                    スキルツリー
+                </button>
                 <button className="btn-back" onClick={onBack}>
                     タイトルに戻る
                 </button>

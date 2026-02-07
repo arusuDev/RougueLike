@@ -822,18 +822,7 @@ body {
 .dungeon-card.cleared { border-color: var(--color-success); }
 .dungeon-card.cleared:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(102, 221, 136, 0.2); }
 
-.cleared-badge {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--color-bg);
-  background: var(--color-success);
-  border-radius: 4px;
-  transform: rotate(5deg);
-}
+
 
 .dungeon-name {
   font-family: var(--font-title);
@@ -992,4 +981,181 @@ body {
 .result-button-title:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+/* スキルツリー画面 */
+.skill-tree-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-light) 100%);
+}
+
+.skill-tree-title {
+  font-family: var(--font-title);
+  font-size: 36px;
+  color: var(--color-text-highlight);
+  text-shadow: 0 0 10px var(--color-text-highlight), 0 4px 0 #cc9944;
+  margin: 0;
+}
+
+.skill-tree-header {
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+.stat-bonuses {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
+
+.bonus-item { color: var(--color-success); font-size: 14px; }
+
+.skill-tree-branches {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.skill-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background: var(--color-bg-panel);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  min-width: 200px;
+}
+
+.skill-branch-title {
+  font-family: var(--font-title);
+  font-size: 18px;
+  color: var(--color-text-highlight);
+  margin-bottom: var(--spacing-sm);
+}
+
+.branch-hp .skill-branch-title { color: #66dd88; }
+.branch-attack .skill-branch-title { color: #dd6666; }
+.branch-defense .skill-branch-title { color: #6688dd; }
+
+.skill-tier { display: flex; gap: var(--spacing-sm); }
+.skill-tier-split { gap: var(--spacing-md); }
+
+.skill-arrow, .skill-arrow-split {
+  color: var(--color-text-dim);
+  font-size: 20px;
+  text-align: center;
+}
+
+.skill-arrow-split { display: flex; gap: var(--spacing-xl); }
+
+.skill-card {
+  width: 140px;
+  padding: var(--spacing-sm);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.skill-card.skill-unlocked {
+  border-color: var(--color-success);
+  background: rgba(102, 221, 136, 0.1);
+}
+
+.skill-card.skill-available {
+  border-color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 221, 136, 0.3);
+}
+
+.skill-card.skill-available:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 221, 136, 0.5);
+}
+
+.skill-card.skill-cant-afford {
+  border-color: var(--color-danger);
+  opacity: 0.7;
+}
+
+.skill-card.skill-locked { opacity: 0.4; }
+
+.skill-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.skill-description {
+  font-size: 10px;
+  color: var(--color-text-dim);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.skill-cost {
+  font-size: 12px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.skill-unlocked .skill-cost { color: var(--color-success); }
+
+.skill-tree-actions { margin-top: var(--spacing-lg); }
+
+.btn-skill-tree {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  color: #1a1a1f;
+  background: linear-gradient(180deg, #fffacc 0%, #ffdd88 100%);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  box-shadow: 0 4px 0 #ccaa55, 0 0 15px rgba(255, 221, 136, 0.4);
+  transition: all 0.2s ease;
+  margin-right: var(--spacing-md);
+}
+
+.btn-skill-tree:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #ccaa55, 0 0 25px rgba(255, 221, 136, 0.6);
+}
+
+.dp-separator {
+  color: var(--color-border);
+  margin: 0 var(--spacing-md);
+}
+
+.dp-value-sub {
+  font-size: 18px;
+  color: var(--color-text-dim);
+}
+
+.cleared-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffee88;
+  background: linear-gradient(180deg, #cc9944 0%, #aa7733 100%);
+  border-radius: 4px;
+  transform: rotate(5deg);
+  box-shadow: 0 0 10px rgba(255, 238, 136, 0.5);
+  text-shadow: 0 0 5px rgba(255, 238, 136, 0.8);
 }
