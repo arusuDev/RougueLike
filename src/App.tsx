@@ -1,6 +1,6 @@
 // メインアプリケーション
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useGameStore, descendStairs } from './state/gameState';
 import { TitleScreen } from './components/TitleScreen';
 import { GameCanvas } from './components/GameCanvas';
@@ -12,6 +12,7 @@ import { DebugPanel } from './components/DebugPanel';
 import { DungeonSelect } from './components/DungeonSelect';
 import { ResultScreen } from './components/ResultScreen';
 import { SkillTreeScreen } from './components/SkillTreeScreen';
+import { MobileDPad } from './components/MobileDPad';
 import { useDebugStore } from './state/debugState';
 import type { Direction } from './types';
 import type { DungeonId } from './data/dungeons/index';
@@ -190,6 +191,21 @@ function App() {
     };
   }, [phase, movePlayer, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
 
+  // モバイルD-Pad操作ハンドラ
+  const handleMobileDirection = useCallback((direction: Direction) => {
+    if (phase === 'playing') {
+      movePlayer(direction);
+    }
+  }, [phase, movePlayer]);
+
+  const handleMobileAction = useCallback((action: 'stairs' | 'inventory') => {
+    if (action === 'stairs') {
+      descendStairs();
+    } else if (action === 'inventory') {
+      toggleInventory();
+    }
+  }, [toggleInventory]);
+
   // ダンジョン選択ハンドラ
   const handleSelectDungeon = (dungeonId: DungeonId) => {
     startGame(dungeonId);
@@ -235,6 +251,10 @@ function App() {
             <HUD />
           </div>
           <MessageLog />
+          <MobileDPad
+            onDirection={handleMobileDirection}
+            onAction={handleMobileAction}
+          />
           {phase === 'inventory' && <Inventory />}
         </div>
       )}
