@@ -106,7 +106,9 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
         const parentH = parent.clientHeight;
         const scaleX = parentW / CANVAS_WIDTH;
         const scaleY = parentH / CANVAS_HEIGHT;
-        setScale(Math.min(scaleX, scaleY, 1));
+        // モバイル: 上限なしで画面にフィット、PC: 等倍上限
+        const isMobile = window.matchMedia('(max-width: 1024px), (hover: none) and (pointer: coarse)').matches;
+        setScale(isMobile ? Math.min(scaleX, scaleY) : Math.min(scaleX, scaleY, 1));
     }, []);
 
     useEffect(() => {
