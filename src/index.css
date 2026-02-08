@@ -1414,20 +1414,55 @@ body {
 
   .hud {
     width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
   }
 
   .hud-section {
+    flex: none;
+    min-width: 0;
+  }
+
+  .hud-label {
+    font-size: 10px;
+    min-width: 28px;
+    display: inline-block;
+  }
+
+  .hud-section {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .hud-bar-container {
+    height: 16px;
     flex: 1;
-    min-width: 120px;
+  }
+
+  .hud-bar-text {
+    font-size: 9px;
   }
 
   .hud-stats {
     grid-template-columns: repeat(5, 1fr);
     width: 100%;
+    gap: var(--spacing-xs);
+  }
+
+  .hud-stat {
+    flex-direction: row;
+    gap: 2px;
+    padding: 2px var(--spacing-xs);
+  }
+
+  .hud-stat-label {
+    font-size: 9px;
+  }
+
+  .hud-stat-value {
+    font-size: 12px;
   }
 
   .hud-inventory-hint {
@@ -1435,7 +1470,7 @@ body {
   }
 
   .message-log {
-    height: 50px;
+    height: 40px;
     font-size: 11px;
     padding: var(--spacing-xs);
   }
