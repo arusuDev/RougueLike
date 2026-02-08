@@ -1,6 +1,6 @@
 // メインゲームキャンバス（ピクセルアート風描画）
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useGameStore } from '../state/gameState';
 import { useDebugStore } from '../state/debugState';
 import {
@@ -85,11 +85,35 @@ function processImageWithTransparency(kind: string, img: HTMLImageElement) {
     processedImageCache[kind] = canvas;
 }
 
+const CANVAS_WIDTH = 1024;
+const CANVAS_HEIGHT = 896;
+
 export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const { state } = useGameStore();
     const { debug } = useDebugStore();
     const [tick, setTick] = useState(0);
+    const [scale, setScale] = useState(1);
+
+    // コンテナサイズに合わせてCanvasをスケーリング
+    const updateScale = useCallback(() => {
+        const container = containerRef.current;
+        if (!container) return;
+        const parent = container.parentElement;
+        if (!parent) return;
+        const parentW = parent.clientWidth;
+        const parentH = parent.clientHeight;
+        const scaleX = parentW / CANVAS_WIDTH;
+        const scaleY = parentH / CANVAS_HEIGHT;
+        setScale(Math.min(scaleX, scaleY, 1));
+    }, []);
+
+    useEffect(() => {
+        updateScale();
+        window.addEventListener('resize', updateScale);
+        return () => window.removeEventListener('resize', updateScale);
+    }, [updateScale]);
 
     // 攻撃エフェクトのクリーンアップタイマー
     useEffect(() => {
@@ -223,12 +247,21 @@ export function GameCanvas({ diagonalMode = false }: { diagonalMode?: boolean })
     }, [state, debug, diagonalMode, tick]);
 
     return (
-        <canvas
-            ref={canvasRef}
-            width={1024}
-            height={896}
-            className="game-canvas"
-        />
+        <div ref={containerRef} className="game-canvas-scaler" style={{
+            width: CANVAS_WIDTH * scale,
+            height: CANVAS_HEIGHT * scale,
+        }}>
+            <canvas
+                ref={canvasRef}
+                width={CANVAS_WIDTH}
+                height={CANVAS_HEIGHT}
+                className="game-canvas"
+                style={{
+                    width: CANVAS_WIDTH * scale,
+                    height: CANVAS_HEIGHT * scale,
+                }}
+            />
+        </div>
     );
 }
 

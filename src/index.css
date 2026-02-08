@@ -1273,3 +1273,204 @@ body {
   border-color: var(--color-text-dim);
   color: var(--color-text);
 }
+
+/* =========================================
+   モバイルコントローラー（D-Pad）
+   ========================================= */
+.mobile-controls {
+  display: none;
+  gap: var(--spacing-lg);
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.dpad-container {
+  flex-shrink: 0;
+}
+
+.dpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: 180px;
+  height: 180px;
+}
+
+.dpad-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--color-text);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s;
+}
+
+.dpad-btn:active {
+  background: var(--color-primary-dim);
+  border-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.dpad-center {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
+
+/* 斜めボタンは少し控えめに */
+.dpad-ul, .dpad-ur, .dpad-dl, .dpad-dr {
+  font-size: 18px;
+  color: var(--color-text-dim);
+  background: rgba(26, 26, 46, 0.7);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.action-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 64px;
+  text-align: center;
+}
+
+.action-btn:active {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-bg);
+}
+
+.action-btn-stairs {
+  border-color: #6b8e23;
+  color: #9acd32;
+}
+
+.action-btn-stairs:active {
+  background: #6b8e23;
+  color: var(--color-bg);
+}
+
+/* =========================================
+   Canvas スケーラー
+   ========================================= */
+.game-canvas-scaler {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================
+   モバイルレスポンシブ
+   ========================================= */
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  .mobile-controls {
+    display: flex;
+  }
+
+  .game-screen {
+    padding: var(--spacing-xs);
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .game-main {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+    min-height: 0;
+  }
+
+  .game-canvas-container {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border-width: 1px;
+  }
+
+  .hud {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+
+  .hud-section {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .hud-stats {
+    grid-template-columns: repeat(5, 1fr);
+    width: 100%;
+  }
+
+  .hud-inventory-hint {
+    display: none;
+  }
+
+  .message-log {
+    height: 50px;
+    font-size: 11px;
+    padding: var(--spacing-xs);
+  }
+
+  /* タイトル画面のモバイル調整 */
+  .title-logo-main {
+    font-size: 28px;
+  }
+
+  .title-logo-sub {
+    font-size: 36px;
+  }
+
+  .title-controls {
+    display: none;
+  }
+
+  /* ダンジョン選択のモバイル調整 */
+  .dungeon-select-screen {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .dungeon-select-title {
+    font-size: 24px;
+  }
+
+  .dungeon-card {
+    width: 100%;
+    max-width: 300px;
+    padding: var(--spacing-md);
+  }
+
+  .dungeon-list {
+    width: 100%;
+    max-width: 640px;
+  }
+}
