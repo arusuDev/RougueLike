@@ -773,7 +773,8 @@ body {
   align-items: center;
   gap: var(--spacing-xl);
   padding: var(--spacing-xl);
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-light) 100%);
 }
 
@@ -1508,6 +1509,7 @@ body {
   .dungeon-select-screen {
     padding: var(--spacing-md);
     gap: var(--spacing-md);
+    -webkit-overflow-scrolling: touch;
   }
 
   .dungeon-select-title {
