@@ -88,8 +88,8 @@ export const ENEMY_STATS = {
     gigaSalamander: {
         name: 'ギガサラマンダー',
         hp: 40,
-        attack: 6,
-        defense: 0,
+        attack: 9,
+        defense: 1,
         expReward: 42,
         speed: 2,
         maxAttacks: 2,

@@ -180,17 +180,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
             const kind = available[randomInt(0, available.length - 1)];
             const stats = ENEMY_STATS[kind];
 
+            // ダンジョンごとのスケーリングを適用
+            const scaling = dungeon?.enemyScaling ?? 1;
+            const expMul = dungeon?.expMultiplier ?? 1;
+
             enemies.push({
                 id: generateId(),
                 type: 'enemy',
                 position: pos,
                 kind,
                 name: stats.name,
-                hp: stats.hp,
-                maxHp: stats.hp,
-                attack: stats.attack,
-                defense: stats.defense,
-                expReward: stats.expReward,
+                hp: Math.round(stats.hp * scaling),
+                maxHp: Math.round(stats.hp * scaling),
+                attack: Math.round(stats.attack * scaling),
+                defense: Math.round(stats.defense * scaling),
+                expReward: Math.round(stats.expReward * expMul),
                 speed: stats.speed,
                 maxAttacks: stats.maxAttacks,
                 direction: 'down',
