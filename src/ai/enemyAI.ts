@@ -3,6 +3,7 @@
 import type { Enemy, Position, DungeonFloor } from '../types';
 import { TileType } from '../types';
 import { MAP_WIDTH, MAP_HEIGHT } from '../constants';
+import { ALL_DIRECTION_DELTAS } from '../utils/direction';
 
 // A*ノード
 interface PathNode {
@@ -67,17 +68,6 @@ export function findPath(
     startNode.f = startNode.g + startNode.h;
     openList.push(startNode);
 
-    const directions = [
-        { x: 0, y: -1 },
-        { x: 0, y: 1 },
-        { x: -1, y: 0 },
-        { x: 1, y: 0 },
-        { x: -1, y: -1 },
-        { x: 1, y: -1 },
-        { x: -1, y: 1 },
-        { x: 1, y: 1 },
-    ];
-
     while (openList.length > 0) {
         // 最小fのノードを選択
         openList.sort((a, b) => a.f - b.f);
@@ -97,7 +87,7 @@ export function findPath(
 
         closedSet.add(currentKey);
 
-        for (const dir of directions) {
+        for (const dir of ALL_DIRECTION_DELTAS) {
             const nx = current.x + dir.x;
             const ny = current.y + dir.y;
             const neighborKey = `${nx},${ny}`;
@@ -160,17 +150,7 @@ export function decideEnemyAction(
     }
 
     // 視界外ならランダム移動
-    const directions = [
-        { x: 0, y: -1 },
-        { x: 0, y: 1 },
-        { x: -1, y: 0 },
-        { x: 1, y: 0 },
-        { x: -1, y: -1 },
-        { x: 1, y: -1 },
-        { x: -1, y: 1 },
-        { x: 1, y: 1 },
-    ];
-    const shuffled = directions.sort(() => Math.random() - 0.5);
+    const shuffled = [...ALL_DIRECTION_DELTAS].sort(() => Math.random() - 0.5);
 
     for (const dir of shuffled) {
         const nx = ex + dir.x;

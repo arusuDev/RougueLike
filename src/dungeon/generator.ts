@@ -3,11 +3,7 @@
 import type { Tile, Room, DungeonFloor, Position } from '../types';
 import { TileType } from '../types';
 import { MAP_WIDTH, MAP_HEIGHT, DUNGEON_PARAMS } from '../constants';
-
-// 乱数ヘルパー
-function randomInt(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+import { randomInt } from '../utils/random';
 
 // 空のマップを生成（全て壁）
 function createEmptyMap(): Tile[][] {
