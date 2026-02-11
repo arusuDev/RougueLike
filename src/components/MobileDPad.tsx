@@ -5,7 +5,7 @@ import type { Direction } from '../types';
 
 interface MobileDPadProps {
     onDirection: (direction: Direction) => void;
-    onAction: (action: 'stairs' | 'inventory') => void;
+    onAction: (action: 'stairs' | 'inventory' | 'attack') => void;
 }
 
 export function MobileDPad({ onDirection, onAction }: MobileDPadProps) {
@@ -70,6 +70,13 @@ export function MobileDPad({ onDirection, onAction }: MobileDPadProps) {
                 </div>
             </div>
             <div className="action-buttons">
+                <button
+                    className="action-btn action-btn-attack"
+                    onTouchStart={(e) => { e.preventDefault(); onAction('attack'); }}
+                    onClick={() => onAction('attack')}
+                >
+                    攻撃
+                </button>
                 <button
                     className="action-btn action-btn-stairs"
                     onTouchStart={(e) => { e.preventDefault(); onAction('stairs'); }}

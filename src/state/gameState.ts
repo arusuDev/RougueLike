@@ -10,12 +10,13 @@ import type {
     GamePhase,
 } from '../types';
 import { TileType } from '../types';
-import { MAX_MESSAGES } from '../constants';
+import { MAX_MESSAGES, EXP_TABLE, LEVEL_UP_BONUS } from '../constants';
 import { getDungeon, type DungeonId } from '../data/dungeons/index';
 import { generateFloorData } from '../logic/floorGeneration';
 import { processPlayerMove } from '../logic/playerMovement';
 import { processEnemyActions } from '../logic/enemyTurn';
 import { processItemUse } from '../logic/itemUsage';
+import { directionToDelta } from '../utils/direction';
 
 // ユニークID生成
 let entityIdCounter = 0;
@@ -34,6 +35,7 @@ interface GameStore {
 
     // プレイヤー操作
     movePlayer: (direction: Direction) => void;
+    attackInPlace: () => void;
     useItem: (itemIndex: number) => void;
     toggleInventory: () => void;
 
@@ -139,6 +141,86 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 items: result.items,
             },
         }));
+
+        // 敵のターンを処理
+        processEnemyTurn();
+
+        // ターンカウント増加
+        set((s) => ({
+            state: {
+                ...s.state,
+                turnCount: s.state.turnCount + 1,
+            },
+        }));
+    },
+
+    attackInPlace: () => {
+        const { state, processEnemyTurn, addMessage } = get();
+        if (state.phase !== 'playing' || !state.player || !state.floor) return;
+
+        const { player, enemies } = state;
+        const { x, y } = player.position;
+        const direction = player.direction;
+
+        // 向いている方向のターゲット座標を計算
+        const delta = directionToDelta(direction);
+        const targetX = x + delta.x;
+        const targetY = y + delta.y;
+
+        // ターゲット座標に敵がいるかチェック
+        const targetEnemy = enemies.find(
+            (e) => e.position.x === targetX && e.position.y === targetY
+        );
+
+        if (targetEnemy) {
+            // 敵に攻撃
+            const damage = Math.max(1, player.attack - targetEnemy.defense);
+            targetEnemy.hp -= damage;
+
+            get().addAttackEffect(targetEnemy.position, direction);
+            addMessage(`${targetEnemy.name}に${damage}のダメージ！`);
+
+            if (targetEnemy.hp <= 0) {
+                addMessage(`${targetEnemy.name}を倒した！`);
+
+                const newExp = player.exp + targetEnemy.expReward;
+                let newPlayer = { ...player, exp: newExp };
+
+                if (
+                    newPlayer.level < EXP_TABLE.length &&
+                    newExp >= EXP_TABLE[newPlayer.level]
+                ) {
+                    newPlayer.level++;
+                    newPlayer.maxHp += LEVEL_UP_BONUS.hp;
+                    newPlayer.hp = newPlayer.maxHp;
+                    newPlayer.attack += LEVEL_UP_BONUS.attack;
+                    newPlayer.defense += LEVEL_UP_BONUS.defense;
+                    newPlayer.expToNext =
+                        EXP_TABLE[newPlayer.level] || EXP_TABLE[EXP_TABLE.length - 1];
+                    addMessage(`レベルアップ！レベル${newPlayer.level}になった！`);
+                }
+
+                set((s) => ({
+                    state: {
+                        ...s.state,
+                        player: newPlayer,
+                        enemies: s.state.enemies.filter((e) => e.id !== targetEnemy.id),
+                    },
+                }));
+            } else {
+                set((s) => ({
+                    state: {
+                        ...s.state,
+                        enemies: s.state.enemies.map((e) =>
+                            e.id === targetEnemy.id ? targetEnemy : e
+                        ),
+                    },
+                }));
+            }
+        } else {
+            // 空振り（メッセージなしでターンを進める）
+            get().addAttackEffect({ x: targetX, y: targetY }, direction);
+        }
 
         // 敵のターンを処理
         processEnemyTurn();
