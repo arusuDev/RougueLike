@@ -479,9 +479,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 }));
             }
         } else {
-            // 空振り
+            // 空振り（メッセージなしでターンを進める）
             get().addAttackEffect({ x: targetX, y: targetY }, direction);
-            addMessage('空振りした！');
         }
 
         // 敵のターンを処理

@@ -170,6 +170,8 @@ function App() {
           return;
         // 攻撃（向いている方向に攻撃/空振り）
         case ' ':
+        case 'z':
+        case 'Z':
           e.preventDefault();
           attackInPlace();
           return;
