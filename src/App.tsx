@@ -18,7 +18,7 @@ import type { Direction } from './types';
 import type { DungeonId } from './data/dungeons/index';
 
 function App() {
-  const { state, movePlayer, toggleInventory, toggleGodMode, fullHeal, nextFloor, startGame, setPhase } = useGameStore();
+  const { state, movePlayer, attackInPlace, toggleInventory, toggleGodMode, fullHeal, nextFloor, startGame, setPhase } = useGameStore();
   const { debug, toggleDebug, toggleFullMap } = useDebugStore();
   const { phase } = state;
 
@@ -168,6 +168,11 @@ function App() {
         case 'Enter':
           descendStairs();
           return;
+        // 攻撃（向いている方向に攻撃/空振り）
+        case ' ':
+          e.preventDefault();
+          attackInPlace();
+          return;
       }
 
       if (direction) {
@@ -189,7 +194,7 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [phase, movePlayer, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
+  }, [phase, movePlayer, attackInPlace, toggleInventory, debug.enabled, toggleDebug, toggleFullMap, toggleGodMode, fullHeal, nextFloor]);
 
   // モバイルD-Pad操作ハンドラ
   const handleMobileDirection = useCallback((direction: Direction) => {
@@ -198,13 +203,15 @@ function App() {
     }
   }, [phase, movePlayer]);
 
-  const handleMobileAction = useCallback((action: 'stairs' | 'inventory') => {
-    if (action === 'stairs') {
+  const handleMobileAction = useCallback((action: 'stairs' | 'inventory' | 'attack') => {
+    if (action === 'attack') {
+      attackInPlace();
+    } else if (action === 'stairs') {
       descendStairs();
     } else if (action === 'inventory') {
       toggleInventory();
     }
-  }, [toggleInventory]);
+  }, [attackInPlace, toggleInventory]);
 
   // ダンジョン選択ハンドラ
   const handleSelectDungeon = (dungeonId: DungeonId) => {
