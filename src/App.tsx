@@ -172,6 +172,7 @@ function App() {
         case ' ':
         case 'z':
         case 'Z':
+          if (e.repeat) return;
           e.preventDefault();
           attackInPlace();
           return;
